@@ -7,13 +7,17 @@ import burp.api.montoya.proxy.ProxyHttpRequestResponse;
 //import burp.api.montoya.ui.UserInterface;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class HelloBurp implements BurpExtension {
+    public MontoyaApi montoya;
+
     @Override
     public void initialize(MontoyaApi montoyaApi) {
-        montoyaApi.extension().setName("Hello Burp");
-        montoyaApi.logging().logToOutput("Hello Burp!");
+        this.montoya = montoyaApi;
+        montoyaApi.extension().setName("TidyBurp");
+        montoyaApi.logging().logToOutput("TidyBurp");
 
 //        ExtensionUI ui = new ExtensionUI();
 //        montoyaApi.userInterface().registerSuiteTab("BAEME", ui.getUi());
@@ -21,14 +25,12 @@ public class HelloBurp implements BurpExtension {
         List<List<Object>> data = new ArrayList<>();
         for (ProxyHttpRequestResponse hItem : history) {
             HttpRequest req = hItem.request();
-            List<Object> reqInfo = new ArrayList<>();
-            reqInfo.add(req.method());
-            reqInfo.add(req.url());
-            reqInfo.add(req.pathWithoutQuery());
-            reqInfo.add(req.query());
-            data.add(reqInfo);
+            data.add(Arrays.asList(req.method(), req.url(), req.pathWithoutQuery(), req.query()));
         }
-        AnnotationsTab annotationsTab = new AnnotationsTab(data);
+        LogTableController controller = new LogTableController(); // kinda sus, probably want to change this later?
+        montoyaApi.http().registerHttpHandler(new LogHTTPHandler(controller));
+
+        AnnotationsTab annotationsTab = new AnnotationsTab(data, controller, montoya);
         montoyaApi.userInterface().registerSuiteTab(annotationsTab.name(), annotationsTab.getPanel());
     }
 }
