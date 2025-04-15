@@ -1,10 +1,10 @@
-package org.example;
+package org.example.logtable;
+
+import org.example.LogEntry;
 
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Arrays;
 
 public class LogTableModel extends AbstractTableModel {
     private final LogTableController controller;

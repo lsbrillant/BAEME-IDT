@@ -2,12 +2,15 @@ package org.example;
 
 import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.http.message.responses.HttpResponse;
+import lombok.Getter;
 
 import java.util.*;
 
 public class LogEntry {
     private List<String> tags; // TODO: change type from String to our own class called Tag or something
+    @Getter
     private HttpRequest request;
+    @Getter
     private HttpResponse response;
     private Date requestDateTime = new Date(0);
     private Date responseDateTime = new Date(0);
@@ -34,14 +37,6 @@ public class LogEntry {
     public LogEntry(HttpRequest request, HttpResponse response) {
         this(request);
         this.response = response;
-    }
-
-    public HttpRequest getRequest() {
-        return this.request;
-    }
-
-    public HttpResponse getResponse() {
-        return this.response;
     }
 
     // TODO: REPLACE.

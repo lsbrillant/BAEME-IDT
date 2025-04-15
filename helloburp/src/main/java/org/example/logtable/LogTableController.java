@@ -1,16 +1,21 @@
-package org.example;
+package org.example.logtable;
+
+import lombok.Setter;
+import org.example.requestviewer.RequestViewerController;
 
 public class LogTableController {
     private final LogTable logTable;
     private final LogTableModel logTableModel;
     private final LogTableColumnModel logTableColumnModel;
     private final TableHeader tableHeader;
+    @Setter
     private RequestViewerController requestViewerController;
 
-    LogTableController() {
+    public LogTableController() {
         this.logTableColumnModel = new LogTableColumnModel();
         this.logTableModel = new LogTableModel(this, logTableColumnModel);
         this.logTable = new LogTable(this);
+//        this.logTable.setAutoResizeMode(JTable.AUTO);
         this.tableHeader = new TableHeader(this);
     }
 
@@ -28,10 +33,6 @@ public class LogTableController {
 
     public LogTable getLogTable() {
         return this.logTable;
-    }
-
-    public void setRequestViewerController(RequestViewerController requestViewerController) {
-        this.requestViewerController = requestViewerController;
     }
 
     public RequestViewerController getRequestViewerController() {

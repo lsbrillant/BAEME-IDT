@@ -1,4 +1,4 @@
-package org.example;
+package org.example.logtable;
 
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;

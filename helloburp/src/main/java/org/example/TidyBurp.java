@@ -4,13 +4,14 @@ import burp.api.montoya.BurpExtension;
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.proxy.ProxyHttpRequestResponse;
+import org.example.logtable.LogTableController;
 //import burp.api.montoya.ui.UserInterface;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class HelloBurp implements BurpExtension {
+public class TidyBurp implements BurpExtension {
     public MontoyaApi montoya;
 
     @Override
@@ -27,7 +28,7 @@ public class HelloBurp implements BurpExtension {
             HttpRequest req = hItem.request();
             data.add(Arrays.asList(req.method(), req.url(), req.pathWithoutQuery(), req.query()));
         }
-        LogTableController controller = new LogTableController(); // kinda sus, probably want to change this later?
+        LogTableController controller = new LogTableController();
         montoyaApi.http().registerHttpHandler(new LogHTTPHandler(controller));
 
         AnnotationsTab annotationsTab = new AnnotationsTab(data, controller, montoya);

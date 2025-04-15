@@ -1,13 +1,18 @@
-package org.example;
+package org.example.requestviewer;
 
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.ui.editor.EditorOptions;
 import burp.api.montoya.ui.editor.HttpRequestEditor;
 import burp.api.montoya.ui.editor.HttpResponseEditor;
+import lombok.Getter;
+import org.example.LogEntry;
 
 public class RequestViewerController {
+    @Getter
     private final HttpRequestEditor requestEditor;
+    @Getter
     private final HttpResponseEditor responseEditor;
+    @Getter
     private final RequestViewerPanel requestViewerPanel;
 
     private LogEntry currentEntry;
@@ -34,17 +39,5 @@ public class RequestViewerController {
         }else{
             responseEditor.setResponse(logEntry.getResponse());
         }
-    }
-
-    public RequestViewerPanel getRequestViewerPanel() {
-        return this.requestViewerPanel;
-    }
-
-    public HttpRequestEditor getRequestEditor() {
-        return this.requestEditor;
-    }
-
-    public HttpResponseEditor getResponseEditor() {
-        return this.responseEditor;
     }
 }

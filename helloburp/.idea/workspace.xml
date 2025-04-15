@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="31af150e-a589-4f89-b48d-d756060e3a50" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/uiDesigner.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/AnnotationsTab.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/AnnotationsTab.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/HelloBurp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/TidyBurp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/LogEntry.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/LogEntry.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/LogHTTPHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/LogHTTPHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/LogProcessor.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/LogTable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/logtable/LogTable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/LogTableColumn.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/logtable/LogTableColumn.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/LogTableColumnModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/logtable/LogTableColumnModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/LogTableController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/logtable/LogTableController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/LogTableModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/logtable/LogTableModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/RequestViewerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/requestviewer/RequestViewerController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/RequestViewerPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/requestviewer/RequestViewerPanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/TableHeader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/logtable/TableHeader.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$">
+          <activation />
+        </task>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="helloburp" type="f1a62948:ProjectNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="helloburp" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
+  <component name="ProjectId" id="2tHZ6chY0SbEFElIAs0DYQnFpRF" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Gradle.Download Sources.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.helloburp [shadowJar].executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;onboarding.tips.debug.path&quot;: &quot;/Users/dashok/BAEME-IDT/helloburp/src/main/java/org/example/Main.java&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.project.gradle&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/main/java/org/example" />
+      <recent name="$PROJECT_DIR$/src/main/java" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="helloburp [shadowJar]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="shadowJar" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Gradle.helloburp [shadowJar]" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-125ca727e0f0-intellij.indexing.shared.core-IU-243.24978.46" />
+        <option value="bundled-js-predefined-d6986cc7102b-76f8388c3a79-JavaScript-IU-243.24978.46" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="31af150e-a589-4f89-b48d-d756060e3a50" name="Changes" comment="" />
+      <created>1740010795622</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1740010795622</updated>
+      <workItem from="1740010797040" duration="724000" />
+      <workItem from="1740029551100" duration="3261000" />
+      <workItem from="1740525746596" duration="1703000" />
+      <workItem from="1740527459209" duration="1880000" />
+      <workItem from="1740596084088" duration="2000" />
+      <workItem from="1740596777114" duration="14326000" />
+      <workItem from="1740618856660" duration="12998000" />
+      <workItem from="1740705017735" duration="4244000" />
+      <workItem from="1740732357319" duration="12191000" />
+      <workItem from="1740779468730" duration="1223000" />
+      <workItem from="1741079147685" duration="1005000" />
+      <workItem from="1741116899532" duration="3801000" />
+      <workItem from="1741130526511" duration="5092000" />
+      <workItem from="1741406124893" duration="3665000" />
+      <workItem from="1741755590313" duration="1215000" />
+      <workItem from="1742417153200" duration="11437000" />
+      <workItem from="1742447862260" duration="7416000" />
+      <workItem from="1742507835791" duration="2678000" />
+      <workItem from="1742585145234" duration="7717000" />
+      <workItem from="1742762421148" duration="5023000" />
+      <workItem from="1742842781473" duration="24880000" />
+      <workItem from="1743021526800" duration="7737000" />
+      <workItem from="1743103587861" duration="9931000" />
+      <workItem from="1743542701584" duration="2860000" />
+      <workItem from="1744144658450" duration="52738000" />
+      <workItem from="1744665268307" duration="3662000" />
+      <workItem from="1744668948168" duration="351000" />
+      <workItem from="1744669306348" duration="9301000" />
+      <workItem from="1744750392077" duration="2695000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>

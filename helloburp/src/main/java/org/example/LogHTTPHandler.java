@@ -1,6 +1,7 @@
 package org.example;
 
 import burp.api.montoya.http.handler.*;
+import org.example.logtable.LogTableController;
 
 import java.util.Date;
 

@@ -1,7 +1,9 @@
-package org.example;
+package org.example.logtable;
+
+import org.example.LogEntry;
+import org.example.requestviewer.RequestViewerController;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class LogTable extends JTable {
     private LogTableController controller;
