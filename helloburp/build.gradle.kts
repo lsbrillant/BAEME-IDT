@@ -18,6 +18,7 @@ dependencies {
     // https://mvnrepository.com/artifact/net.portswigger.burp.extensions/montoya-api
     implementation("net.portswigger.burp.extensions:montoya-api:2025.2")
     implementation("com.github.CoreyD97:Burp-Montoya-Utilities:234d21d")
+    implementation("com.intellij:forms_rt:7.0.3")
 
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")

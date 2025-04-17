@@ -22,16 +22,16 @@ public class TidyBurp implements BurpExtension {
 
 //        ExtensionUI ui = new ExtensionUI();
 //        montoyaApi.userInterface().registerSuiteTab("BAEME", ui.getUi());
-        List<ProxyHttpRequestResponse> history = montoyaApi.proxy().history();
-        List<List<Object>> data = new ArrayList<>();
-        for (ProxyHttpRequestResponse hItem : history) {
-            HttpRequest req = hItem.request();
-            data.add(Arrays.asList(req.method(), req.url(), req.pathWithoutQuery(), req.query()));
-        }
+//        List<ProxyHttpRequestResponse> history = montoyaApi.proxy().history();
+//        List<List<Object>> data = new ArrayList<>();
+//        for (ProxyHttpRequestResponse hItem : history) {
+//            HttpRequest req = hItem.request();
+//            data.add(Arrays.asList(req.method(), req.url(), req.pathWithoutQuery(), req.query()));
+//        }
         LogTableController controller = new LogTableController();
         montoyaApi.http().registerHttpHandler(new LogHTTPHandler(controller));
 
-        AnnotationsTab annotationsTab = new AnnotationsTab(data, controller, montoya);
+        AnnotationsTab annotationsTab = new AnnotationsTab(controller, montoya);
         montoyaApi.userInterface().registerSuiteTab(annotationsTab.name(), annotationsTab.getPanel());
     }
 }

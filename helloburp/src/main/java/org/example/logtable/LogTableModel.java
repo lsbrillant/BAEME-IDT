@@ -32,6 +32,7 @@ public class LogTableModel extends AbstractTableModel {
             return row + 1;
         }
         return this.entries.get(row).getData().get(column - 1);
+//        return String.format("%d %d", row, column);
     }
 
     public List<LogEntry> getData() {

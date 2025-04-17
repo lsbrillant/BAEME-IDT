@@ -18,7 +18,7 @@ public class AnnotationsTab {
     private VariableViewPanel tableViewerSplitPanel;
     private RequestViewerPanel requestViewerPanel;
 
-    public AnnotationsTab(List<List<Object>> dat, LogTableController logTableController, MontoyaApi montoya) {
+    public AnnotationsTab(LogTableController logTableController, MontoyaApi montoya) {
         this.panel = new JPanel(new BorderLayout());
         Object[][] data = {
                 {1, "John", 25},
@@ -34,12 +34,9 @@ public class AnnotationsTab {
 //        DefaultTableModel model = new DefaultTableModel(data, columnNames);
 //        JTable logTable = new JTable(model);
 
-//        LogTableController logTableController = new LogTableController();
         LogTable logTable = logTableController.getLogTable();
         JScrollPane scrollPane = new JScrollPane(logTable, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-//        scrollPane.setPreferredSize(new Dimension(panel.getPreferredSize().width,
-//                scrollPane.getPreferredSize().height)); // makes this the same width as the JPanel it's in
 
         RequestViewerController requestViewerController = new RequestViewerController(montoya);
         logTableController.setRequestViewerController(requestViewerController); // hack to avoid creating LogViewController
