@@ -3,6 +3,7 @@ package org.example;
 import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.http.message.responses.HttpResponse;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.*;
 
@@ -11,9 +12,13 @@ public class LogEntry {
     @Getter
     private HttpRequest request;
     @Getter
+    @Setter
     private HttpResponse response;
     private Date requestDateTime = new Date(0);
     private Date responseDateTime = new Date(0);
+    @Setter
+    @Getter
+    private int messageId;
     // TODO (Michaela?): fill in all relevant fields here
     // Look at loggerplusplus/logentry/LogEntry.java for reference
 

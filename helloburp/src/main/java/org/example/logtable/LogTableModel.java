@@ -27,6 +27,7 @@ public class LogTableModel extends AbstractTableModel {
         return this.columnModel.getColumnCount();
     }
 
+    @Override
     public Object getValueAt(int row, int column) {
         if (column == 0) { // request number column
             return row + 1;
@@ -43,12 +44,7 @@ public class LogTableModel extends AbstractTableModel {
         return this.entries.get(row);
     }
 
-    public String getColumnName(int column) {
-        //return this.columnModel.getColumn(column).getName();
-        String[] names = {"Number", "Host", "Method"};
-        return names[column];
-    }
-
+    @Override
     public boolean isCellEditable(int row, int column) {
         return !((LogTableColumn) this.columnModel.getColumn(column)).isReadOnly();
     }
@@ -58,6 +54,5 @@ public class LogTableModel extends AbstractTableModel {
         fireTableRowsInserted(this.entries.size() - 1, this.entries.size() - 1);
     }
 
-    // TODO: isCellEditable (should come from the LogTableColumnModel)
     // TODO: a lot more methods (as relevant), see LoggerPlusPlus as reference
 }

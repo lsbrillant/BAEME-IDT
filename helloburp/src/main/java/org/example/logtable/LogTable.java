@@ -10,7 +10,6 @@ public class LogTable extends JTable {
 
     LogTable(LogTableController controller) {
         super(controller.getLogTableModel(), controller.getLogTableColumnModel());
-        this.setTableHeader(controller.getTableHeader());
         this.controller = controller;
 
         this.getSelectionModel().addListSelectionListener(e -> {
