@@ -43,7 +43,7 @@ public class AnnotationsTab {
 
         VariableViewPanel bottomPanel = new VariableViewPanel(null, "msgviewlayout",
                 requestViewerController.getRequestViewerPanel(), "Request/Response",
-                new JScrollPane(new JLabel("TAG STUFF GOES HERE!")), "Tags",
+                new TaggingFeature(logTableController), "Tags",
                 VariableViewPanel.View.HORIZONTAL);
 
         tableViewerSplitPanel = new VariableViewPanel(null, "msgviewlayout", scrollPane, "Log Table",
