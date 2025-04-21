@@ -1,5 +1,6 @@
 package org.example;
 
+import burp.api.montoya.http.message.HttpHeader;
 import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.http.message.responses.HttpResponse;
 import lombok.Getter;
@@ -21,6 +22,18 @@ public class LogEntry {
     private int messageId;
     // TODO (Michaela?): fill in all relevant fields here
     // Look at loggerplusplus/logentry/LogEntry.java for reference
+
+    // Metadata for tagging
+    private String hostname;
+    private String urlString;
+    private String httpMethod;
+    private Short responseStatus;
+    private String comment; // use for the annotations for the tags(?)
+    private int requestResponseDelay;  // is this useful for slow responses(?)
+    private List<HttpHeader> requestHeaders;
+    private List<HttpHeader> responseHeaders;
+    private List<String> parameters;
+
 
     // TODO: define process, processRequest, processResponse methods
     // These methods should extract and assign relevant fields
