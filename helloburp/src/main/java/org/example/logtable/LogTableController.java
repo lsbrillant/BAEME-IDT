@@ -38,4 +38,12 @@ public class LogTableController {
     public RequestViewerController getRequestViewerController() {
         return this.requestViewerController;
     }
+
+    public void tagSelectedRequest(String tag) {
+        int selectedRow = logTable.getSelectedRow();
+        if (selectedRow >= 0) {
+            int modelRow = logTable.convertRowIndexToModel(selectedRow);
+            logTableModel.setValueAt(tag, modelRow, logTableModel.getColumnCount() - 1);
+        }
+    }
 }

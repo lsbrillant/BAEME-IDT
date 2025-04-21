@@ -49,4 +49,31 @@ public class LogEntry {
     public List<Object> getData() {
         return Arrays.asList(this.request.method(), this.request.url());
     }
+
+    public void setTag(String tag) {
+        tags.clear();
+        tags.add(tag);
+    }
+
+    public void addTag(String tag) {
+        if (!tags.contains(tag)) {
+            tags.add(tag);
+        }
+    }
+
+    public String getFirstTag() {
+        return tags.isEmpty() ? "" : tags.get(0);
+    }
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public void removeTag(String tag) {
+        tags.remove(tag);
+    }
+
+    public void clearTags() {
+        tags.clear();
+    }
 }

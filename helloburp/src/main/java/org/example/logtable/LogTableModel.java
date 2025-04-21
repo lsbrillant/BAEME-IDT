@@ -32,6 +32,11 @@ public class LogTableModel extends AbstractTableModel {
         if (column == 0) { // request number column
             return row + 1;
         }
+
+        if (column == getColumnCount() - 1) {
+            return this.entries.get(row).getFirstTag();
+        }
+
         return this.entries.get(row).getData().get(column - 1);
 //        return String.format("%d %d", row, column);
     }
@@ -52,6 +57,14 @@ public class LogTableModel extends AbstractTableModel {
     public void addEntry(LogEntry entry) {
         this.entries.add(entry);
         fireTableRowsInserted(this.entries.size() - 1, this.entries.size() - 1);
+    }
+
+    @Override
+    public void setValueAt(Object aValue, int row, int column) {
+        if (column == getColumnCount() - 1) {
+            this.entries.get(row).setTag((String) aValue);
+            fireTableCellUpdated(row, column);
+        }
     }
 
     // TODO: a lot more methods (as relevant), see LoggerPlusPlus as reference
