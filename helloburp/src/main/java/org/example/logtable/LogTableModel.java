@@ -8,12 +8,12 @@ import java.util.List;
 
 public class LogTableModel extends AbstractTableModel {
     private final LogTableController controller;
-    private final LogTableColumnModel columnModel;
+    private final String[] columnNames;
     private final List<LogEntry> entries;
 
-    public LogTableModel(LogTableController controller, LogTableColumnModel columnModel) {
+    public LogTableModel(LogTableController controller) {
         this.entries = new ArrayList<>(); // Collections.synchronizedList?
-        this.columnModel = columnModel;
+        this.columnNames = new String[]{"Number", "Host", "Method", "Tag"}; // TODO: add all of them here
         this.controller = controller;
 //        this.entries.add(Arrays.asList(1, "http://dhruviscool.com", "GET"));
 //        this.entries.add(Arrays.asList(2, "http://sheaminiscool.com", "POST"));
@@ -24,7 +24,12 @@ public class LogTableModel extends AbstractTableModel {
     }
 
     public int getColumnCount() {
-        return this.columnModel.getColumnCount();
+        return this.columnNames.length;
+    }
+
+    @Override
+    public String getColumnName(int column) {
+        return columnNames[column];
     }
 
     @Override
@@ -47,11 +52,6 @@ public class LogTableModel extends AbstractTableModel {
 
     public LogEntry getRow(int row) {
         return this.entries.get(row);
-    }
-
-    @Override
-    public boolean isCellEditable(int row, int column) {
-        return !((LogTableColumn) this.columnModel.getColumn(column)).isReadOnly();
     }
 
     public void addEntry(LogEntry entry) {

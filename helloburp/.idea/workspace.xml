@@ -5,11 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="31af150e-a589-4f89-b48d-d756060e3a50" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/FilterFeature.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/LogEntry.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/LogEntry.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/LogHTTPHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/LogHTTPHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/AnnotationsTab.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/AnnotationsTab.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/logtable/LogTable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/logtable/LogTable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/logtable/LogTableColumnModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/logtable/LogTableColumnModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/logtable/LogTableController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/logtable/LogTableController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/logtable/LogTableModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/logtable/LogTableModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/logtable/TableHeader.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -175,6 +178,10 @@
       <workItem from="1744850376931" duration="5395000" />
       <workItem from="1744920810312" duration="5895000" />
       <workItem from="1744961057930" duration="3473000" />
+      <workItem from="1745259872758" duration="4544000" />
+      <workItem from="1745357862798" duration="5871000" />
+      <workItem from="1745386713828" duration="2257000" />
+      <workItem from="1745440211564" duration="7125000" />
     </task>
     <servers />
   </component>

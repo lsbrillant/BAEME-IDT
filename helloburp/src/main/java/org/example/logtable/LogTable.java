@@ -9,7 +9,7 @@ public class LogTable extends JTable {
     private LogTableController controller;
 
     LogTable(LogTableController controller) {
-        super(controller.getLogTableModel(), controller.getLogTableColumnModel());
+        super(controller.getLogTableModel());
         this.controller = controller;
 
         this.getSelectionModel().addListSelectionListener(e -> {

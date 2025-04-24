@@ -6,29 +6,16 @@ import org.example.requestviewer.RequestViewerController;
 public class LogTableController {
     private final LogTable logTable;
     private final LogTableModel logTableModel;
-    private final LogTableColumnModel logTableColumnModel;
-    private final TableHeader tableHeader;
     @Setter
     private RequestViewerController requestViewerController;
 
     public LogTableController() {
-        this.logTableColumnModel = new LogTableColumnModel();
-        this.logTableModel = new LogTableModel(this, logTableColumnModel);
+        this.logTableModel = new LogTableModel(this);
         this.logTable = new LogTable(this);
-//        this.logTable.setAutoResizeMode(JTable.AUTO);
-        this.tableHeader = new TableHeader(this);
-    }
-
-    public TableHeader getTableHeader() {
-        return this.tableHeader;
     }
 
     public LogTableModel getLogTableModel() {
         return this.logTableModel;
-    }
-
-    public LogTableColumnModel getLogTableColumnModel() {
-        return this.logTableColumnModel;
     }
 
     public LogTable getLogTable() {

@@ -37,6 +37,9 @@ public class AnnotationsTab {
         LogTable logTable = logTableController.getLogTable();
         JScrollPane scrollPane = new JScrollPane(logTable, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        String[] headers = {"Method", "Host", "Code", "Another", "Item"}; // should be column names
+        JComboBox<String> comboBox = new JComboBox<>(headers);
+        JTextArea searchField = new JTextArea();
 
         RequestViewerController requestViewerController = new RequestViewerController(montoya);
         logTableController.setRequestViewerController(requestViewerController); // hack to avoid creating LogViewController
@@ -48,6 +51,7 @@ public class AnnotationsTab {
 
         tableViewerSplitPanel = new VariableViewPanel(null, "msgviewlayout", scrollPane, "Log Table",
                 bottomPanel, "Bottom", VariableViewPanel.View.VERTICAL);
+        this.panel.add(new FilterFeature(), BorderLayout.NORTH);
         this.panel.add(tableViewerSplitPanel, BorderLayout.CENTER);
     }
 

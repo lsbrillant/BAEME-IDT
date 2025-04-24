@@ -50,33 +50,33 @@ public class LogTableColumnModel extends DefaultTableColumnModel {
     public int getColumnCount() {
         return this.columns.size();
     }
-
-    public void addColumn(TableColumn column) {
-        int newPosition = -1;
-        for (int i = 0; i < this.columns.size(); i++) {
-            if (this.columns.get(i).compareTo((LogTableColumn) column) > 0) {
-                newPosition = i;
-                break;
-            }
-        }
-        if (newPosition == -1) {
-            newPosition = this.columns.size();
-        }
-        this.columns.add(newPosition, (LogTableColumn) column);
-        // Adjust model indices of subsequent columns
-        for (int i = newPosition; i < this.columns.size(); i++) {
-            this.columns.get(i).setOrder(i);
-        }
-    }
-
-    public void removeColumn(TableColumn column) {
-        int columnIndex = this.columns.indexOf((LogTableColumn) column);
-        if (columnIndex != -1) {
-            this.columns.remove(columnIndex);
-            // Adjust all subsequent column model indices
-            for (int i = columnIndex; i < this.columns.size(); i++) {
-                this.columns.get(i).setOrder(i);
-            }
-        }
-    }
+//
+//    public void addColumn(TableColumn column) {
+//        int newPosition = -1;
+//        for (int i = 0; i < this.columns.size(); i++) {
+//            if (this.columns.get(i).compareTo((LogTableColumn) column) > 0) {
+//                newPosition = i;
+//                break;
+//            }
+//        }
+//        if (newPosition == -1) {
+//            newPosition = this.columns.size();
+//        }
+//        this.columns.add(newPosition, (LogTableColumn) column);
+//        // Adjust model indices of subsequent columns
+//        for (int i = newPosition; i < this.columns.size(); i++) {
+//            this.columns.get(i).setOrder(i);
+//        }
+//    }
+//
+//    public void removeColumn(TableColumn column) {
+//        int columnIndex = this.columns.indexOf((LogTableColumn) column);
+//        if (columnIndex != -1) {
+//            this.columns.remove(columnIndex);
+//            // Adjust all subsequent column model indices
+//            for (int i = columnIndex; i < this.columns.size(); i++) {
+//                this.columns.get(i).setOrder(i);
+//            }
+//        }
+//    }
 }
