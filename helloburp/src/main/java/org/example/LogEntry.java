@@ -11,6 +11,7 @@ import lombok.Setter;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+
 import java.util.*;
 
 
@@ -26,7 +27,6 @@ public class LogEntry {
     @Setter
     @Getter
     private int messageId;
-
     private String requestHttpVersion;
 
     // Java Status class
@@ -37,6 +37,11 @@ public class LogEntry {
     private int number;
     private String tag;
 
+    // Look at loggerplusplus/logentry/LogEntry.java for reference
+
+    // from logtable
+    private int number;
+    private String tag;
     // Metadata for tagging
     private String hostname; // w/o port number
     private String host; // w/ port number
@@ -54,6 +59,11 @@ public class LogEntry {
     private String statusCode; // code
     private int length;
     private String mimeType; // MIME
+    private List<String> parameters;
+    private boolean edited;
+    private String statusCode;
+    private int length;
+    private String mimeType;
     private String extension;
     private String title;
     private String tls;
@@ -390,6 +400,67 @@ public class LogEntry {
         this.complete = true;
         return Status.PROCESSED;
     }
+
+
+    // TODO: Processing data logic for requests
+
+
+    // change some of this up from Logger++
+    public boolean process() {
+        previousStatus = this.status;
+        switch (this.status) {
+            case UNPROCESSED: {
+                this.status = processRequest();
+            }
+            case AWAITING_RESPONSE: {
+                if (this.response == null) {
+                    this.status = Status.AWAITING_RESPONSE;
+                    return false;
+                }
+                processResponse();
+                this.status = Status.PROCESSED;
+                return true;
+            }
+            case PROCESSED: {
+                return true;
+            }
+            default: return false;
+        }
+    }
+
+
+    // need reprocess(?)
+
+
+    public Status getStatus() {
+        return status;
+    }
+
+
+    public Status getPreviousStatus() {
+        return previousStatus;
+    }
+
+
+    // similar to processRequest?
+    // need java Status class - returns Status object
+    private void processRequest() {
+        requestHeaders = request.headers();
+
+
+        // make the request tokens
+        String[] httpRequestTokens = requestHeaders.get(0).value.split("");
+
+
+        return
+    }
+
+
+    private void processResponse() {
+
+
+    }
+
 
     public void setTag(String tag) {
         tags.clear();
