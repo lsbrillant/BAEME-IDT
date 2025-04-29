@@ -19,19 +19,20 @@ public class LogTableColumnModel extends DefaultTableColumnModel {
         defaultColumns.add(Arrays.asList("Host", order++, true, "", "Host"));
         defaultColumns.add(Arrays.asList("Method", order++, true, "", "Method"));
         defaultColumns.add(Arrays.asList("Tag", order++, true, "", "Tag"));
-//        defaultColumns.add(Arrays.asList("URL", order++, true, "", "URL"));
-//        defaultColumns.add(Arrays.asList("Params", order++, true, "", "Params"));
-//        defaultColumns.add(Arrays.asList("Edited", order++, false, "", "Edited"));
-//        defaultColumns.add(Arrays.asList("Code", order++, true, "", "Status code"));
-//        defaultColumns.add(Arrays.asList("Length", order++, true, "", "Length"));
-//        defaultColumns.add(Arrays.asList("MIME", order++, true, "", "MIME type"));
-//        defaultColumns.add(Arrays.asList("Extension", order++, true, "", "Extension"));
-//        defaultColumns.add(Arrays.asList("Title", order++, true, "", "Title"));
-//        defaultColumns.add(Arrays.asList("TLS", order++, true, "", "TLS"));
-//        defaultColumns.add(Arrays.asList("IP", order++, true, "", "IP"));
-//        defaultColumns.add(Arrays.asList("Cookies", order++, true, "", "Cookies"));
-//        defaultColumns.add(Arrays.asList("Time", order++, true, "", "Time"));
-//        defaultColumns.add(Arrays.asList("Tags", order, true, "", "Tags"));
+        // comment out before
+        defaultColumns.add(Arrays.asList("URL", order++, true, "", "URL"));
+        defaultColumns.add(Arrays.asList("Params", order++, true, "", "Params"));
+        defaultColumns.add(Arrays.asList("Edited", order++, false, "", "Edited"));
+        defaultColumns.add(Arrays.asList("Code", order++, true, "", "Status code"));
+        defaultColumns.add(Arrays.asList("Length", order++, true, "", "Length"));
+        defaultColumns.add(Arrays.asList("MIME", order++, true, "", "MIME type"));
+        defaultColumns.add(Arrays.asList("Extension", order++, true, "", "Extension"));
+        defaultColumns.add(Arrays.asList("Title", order++, true, "", "Title"));
+        defaultColumns.add(Arrays.asList("TLS", order++, true, "", "TLS"));
+        defaultColumns.add(Arrays.asList("IP", order++, true, "", "IP"));
+        defaultColumns.add(Arrays.asList("Cookies", order++, true, "", "Cookies"));
+        defaultColumns.add(Arrays.asList("Time", order++, true, "", "Time"));
+        defaultColumns.add(Arrays.asList("Tags", order, true, "", "Tags"));
         for (int i = 0; i < defaultColumns.size(); i++) {
             LogTableColumn column = new LogTableColumn();
             column.setName((String) defaultColumns.get(i).get(0));
