@@ -383,51 +383,51 @@ public class LogEntry {
             this.params = uri.getQuery() != null || this.hasBodyParam;
             // analyze HTTP headers
         }
-            for (HttpHeader header : requestHeaders) {
-                // handle cookies
-                if (header.name().equalsIgnoreCase("cookie")) {
-                    this.sentCookies = header.value();
-                    if (!this.sentCookies.isEmpty()) {
-                        this.hasCookieParam = true;
-                        this.sentCookies += ";";
+        for (HttpHeader header : requestHeaders) {
+            // handle cookies
+            if (header.name().equalsIgnoreCase("cookie")) {
+                this.sentCookies = header.value();
+                if (!this.sentCookies.isEmpty()) {
+                    this.hasCookieParam = true;
+                    this.sentCookies += ";";
 
-                        // Check to see if it uses cookie Jars!
-                        List<Cookie> cookiesInJar = montoya.http().cookieJar().cookies();
-                        boolean oneNotMatched = false;
-                        boolean anyParamMatched = false;
+                    // Check to see if it uses cookie Jars!
+                    List<Cookie> cookiesInJar = montoya.http().cookieJar().cookies();
+                    boolean oneNotMatched = false;
+                    boolean anyParamMatched = false;
 
-                        for (Cookie cookieItem : cookiesInJar) {
-                            if (cookieItem.domain().equals(this.hostname)) {
-                                String currentCookieJarParam = cookieItem.name() + "=" + cookieItem.value() + ";";
-                                if (this.sentCookies.contains(currentCookieJarParam)) {
-                                    anyParamMatched = true;
-                                } else {
-                                    oneNotMatched = true;
-                                }
-                                if (anyParamMatched && oneNotMatched) {
-                                    break; // we do not need to analyse it more!
-                                }
+                    for (Cookie cookieItem : cookiesInJar) {
+                        if (cookieItem.domain().equals(this.hostname)) {
+                            String currentCookieJarParam = cookieItem.name() + "=" + cookieItem.value() + ";";
+                            if (this.sentCookies.contains(currentCookieJarParam)) {
+                                anyParamMatched = true;
+                            } else {
+                                oneNotMatched = true;
                             }
-                            // set cookie jar usage status
-                            if (oneNotMatched && anyParamMatched) {
-                                this.usesCookieJar = CookieJarStatus.PARTIALLY;
-                            } else if (!oneNotMatched && anyParamMatched) {
-                                this.usesCookieJar = CookieJarStatus.YES;
+                            if (anyParamMatched && oneNotMatched) {
+                                break; // we do not need to analyse it more!
                             }
                         }
-                        //handle different headers
-                    } else if (header.name().equalsIgnoreCase("referer")) {
-                        this.referrerURL = header.value();
-                    } else if (header.name().equalsIgnoreCase("content-type")) {
-                        this.requestContentType = header.value();
-                    } else if (header.name().equalsIgnoreCase("origin")) {
-                        this.origin = header.value();
+                        // set cookie jar usage status
+                        if (oneNotMatched && anyParamMatched) {
+                            this.usesCookieJar = CookieJarStatus.PARTIALLY;
+                        } else if (!oneNotMatched && anyParamMatched) {
+                            this.usesCookieJar = CookieJarStatus.YES;
+                        }
                     }
+                    //handle different headers
+                } else if (header.name().equalsIgnoreCase("referer")) {
+                    this.referrerURL = header.value();
+                } else if (header.name().equalsIgnoreCase("content-type")) {
+                    this.requestContentType = header.value();
+                } else if (header.name().equalsIgnoreCase("origin")) {
+                    this.origin = header.value();
                 }
             }
-
-            return Status.AWAITING_RESPONSE;
         }
+
+        return Status.AWAITING_RESPONSE;
+    }
 
     // ill make this work eventually
 //    // change to make relevant to tidyburp
@@ -572,4 +572,3 @@ public class LogEntry {
         return null;
     }
 }
-
