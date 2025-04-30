@@ -5,9 +5,11 @@ import org.example.LogEntry;
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
 
 public class LogTableModel extends AbstractTableModel {
     private final LogTableController controller;
+    @Getter
     private final String[] columnNames;
     private final List<LogEntry> entries;
 
