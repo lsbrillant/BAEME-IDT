@@ -47,6 +47,7 @@ import java.util.*;
 public class LogEntry {
     private List<String> tags; // TODO: change type from String to our own class called Tag or something
     @Getter
+    @Setter
     private HttpRequest request;
     @Getter
     @Setter
@@ -74,15 +75,15 @@ public class LogEntry {
     private String urlString; // url
     private URI uri;
     private String httpMethod; // method
-    private Short responseStatus;
-    private String responseStatusText;
+    private Short responseStatus = -1; // status codes
+    private String responseStatusText; // status code text
     private String redirectURL;
     private String comment; // use for the annotations for the tags(?)
     private int requestResponseDelay;  // is this useful for slow responses(?)
     private List<HttpHeader> requestHeaders;
     private List<HttpHeader> responseHeaders;
     private List<String> parameters;
-    private Set<String> reflectedParameters = new HashSet<>();
+    private Set<String> reflectedParameters;
 
     private String formattedResponseTime;
 
@@ -92,7 +93,6 @@ public class LogEntry {
 
     private boolean params;
     private boolean edited; // is it boolean(?)
-    private String statusCode; // code
     private int length;
     private MimeType responseMimeType;
 
@@ -168,6 +168,7 @@ public class LogEntry {
     public UUID getRequestId() {
         return this.requestId;
     }
+
     public int getNumber() {
         return number;
     }
@@ -188,8 +189,12 @@ public class LogEntry {
         return edited;
     }
 
-    public String getStatusCode() {
-        return statusCode;
+    public Short getResponseStatus() {
+        return responseStatus;
+    }
+
+    public String getResponseStatusText() {
+        return responseStatusText;
     }
 
     public int getLength() {
@@ -231,20 +236,25 @@ public class LogEntry {
             }
             case AWAITING_RESPONSE: {
                 if (this.response == null) {
-                    this.status = Status.AWAITING_RESPONSE;
+                    this.status = Status.FAILED_PROCESS;
                     return false;
                 }
-                processResponse();
-                this.status = Status.PROCESSED;
-                return true;
+                this.status = processResponse();
+                return this.status == Status.PROCESSED;
+                // return true;
             }
             case PROCESSED: {
                 return true;
             }
+            case FAILED_PROCESS: {
+                reprocess();
+                // return this.status == Status.PROCESSED;
+                break;
+            }
             default:
                 return false;
         }
-        return false;
+        return this.status == Status.PROCESSED;
     }
 
     public void reprocess() {
@@ -270,257 +280,275 @@ public class LogEntry {
 
     // change to make relevant to tidyburp
     private Status processRequest() {
-        if (this.request != null) {
-            // retrieve basic request metadata
-            if (this.requestHeaders != null && !this.requestHeaders.isEmpty()) {
-                requestHeaders = request.headers();
-            } else {
-                System.out.print("Request headers is null or empty");
+        if (this.request == null) {
+            return Status.FAILED_PROCESS;
+        }
+        requestHeaders = request.headers();
+        // retrieve basic request metadata
+        if (this.requestHeaders != null && !this.requestHeaders.isEmpty()) {
+            requestHeaders = request.headers();
+        } else {
+            System.out.print("Request headers is null or empty");
+        }
+        this.urlString = request.url();
+        this.hostname = this.request.httpService().host();
+        this.protocol = this.request.httpService().secure() ? "https" : "http";
+        this.isSSL = this.request.httpService().secure();
+        this.targetPort = this.request.httpService().port();
+        this.httpMethod = request.method();
+        this.requestDateTime = new Date();
+        this.time = String.valueOf(requestDateTime.getTime());
+        // or
+        //this.time = System.currentTimeMillis(); // need to capture current time/date
+
+        // http ports
+        boolean isDefaultPort = (this.protocol.equals("https") && this.targetPort == 443)
+                || (this.protocol.equals("http") && this.targetPort == 80);
+        // hosts
+        this.host = this.protocol + "://" + this.hostname + (isDefaultPort ? "" : ":" + this.targetPort);
+        // Process the HTTP method
+        this.httpMethod = request.method();
+
+        //only needed if we care about HTTP version
+        //parse for http version from request
+        String[] httpRequestTokens = requestHeaders.get(0).value().split(" ");
+        this.requestHttpVersion = httpRequestTokens[httpRequestTokens.length - 1];
+
+        //extract non-cookie parameters
+        this.parameters = request.parameters().stream()
+                .filter(param -> param.type() != HttpParameterType.COOKIE)
+                .map(HttpParameter::name)
+                .collect(Collectors.toList());
+
+        // Length of request body
+        this.requestBodyLength = this.getRequestBytes().length - request.bodyOffset();
+        this.hasBodyParam = requestBodyLength > 0;
+
+        // url parsing and extension extraction
+        if (isValidUri(this.urlString)) {
+            this.uri = URI.create(this.urlString);
+            // tags by file type
+            String tempPath = uri.getPath().replaceAll("\\\\", "/");
+            tempPath = tempPath.substring(tempPath.lastIndexOf("/"));
+            int tempPathDotLocation = tempPath.lastIndexOf(".");
+            if (tempPathDotLocation >= 0) {
+                this.urlExtension = tempPath.substring(tempPathDotLocation + 1);
             }
-                this.urlString = request.url();
-                this.hostname = this.request.httpService().host();
-                this.protocol = this.request.httpService().secure() ? "https" : "http";
-                this.isSSL = this.request.httpService().secure();
-                this.targetPort = this.request.httpService().port();
-                this.httpMethod = request.method();
-                this.requestDateTime = new Date();
-                this.time = String.valueOf(requestDateTime.getTime());
-                // or
-                //this.time = System.currentTimeMillis(); // need to capture current time/date
-            // http ports
-            boolean isDefaultPort = (this.protocol.equals("https") && this.targetPort == 443)
-                    || (this.protocol.equals("http") && this.targetPort == 80);
-            // hosts
-            this.host = this.protocol + "://" + this.hostname + (isDefaultPort ? "" : ":" + this.targetPort);
-            // Process the HTTP method
-            this.httpMethod = request.method();
+            // param existence flag
+            this.params = uri.getQuery() != null || this.hasBodyParam;
+            // analyze HTTP headers
+        }
+        for (HttpHeader header : requestHeaders) {
+            // handle cookies
+            if (header.name().equalsIgnoreCase("cookie")) {
+                this.sentCookies = header.value();
+                if (!this.sentCookies.isEmpty()) {
+                    this.hasCookieParam = true;
+                    this.sentCookies += ";";
 
-            //only needed if we care about HTTP version
-            //parse for http version from request
-            String[] httpRequestTokens = requestHeaders.get(0).value().split(" ");
-            this.requestHttpVersion = httpRequestTokens[httpRequestTokens.length - 1];
+                    // Check to see if it uses cookie Jars!
+                    List<Cookie> cookiesInJar = montoya.http().cookieJar().cookies();
+                    boolean oneNotMatched = false;
+                    boolean anyParamMatched = false;
 
-            //extract non-cookie parameters
-            this.parameters = request.parameters().stream()
-                    .filter(param -> param.type() != HttpParameterType.COOKIE)
-                    .map(HttpParameter::name)
-                    .collect(Collectors.toList());
-
-            // Length of request body
-            this.requestBodyLength = this.getRequestBytes().length - request.bodyOffset();
-            this.hasBodyParam = requestBodyLength > 0;
-
-            // url parsing and extension extraction
-            if (isValidUri(this.urlString)) {
-                this.uri = URI.create(this.urlString);
-                // tags by file type
-                String tempPath = uri.getPath().replaceAll("\\\\", "/");
-                tempPath = tempPath.substring(tempPath.lastIndexOf("/"));
-                int tempPathDotLocation = tempPath.lastIndexOf(".");
-                if (tempPathDotLocation >= 0) {
-                    this.urlExtension = tempPath.substring(tempPathDotLocation + 1);
-                }
-                // param existence flag
-                this.params = uri.getQuery() != null || this.hasBodyParam;
-                // analyze HTTP headers
-            }
-            for (HttpHeader header : requestHeaders) {
-                // handle cookies
-                if (header.name().equalsIgnoreCase("cookie")) {
-                    this.sentCookies = header.value();
-                    if (!this.sentCookies.isEmpty()) {
-                        this.hasCookieParam = true;
-                        this.sentCookies += ";";
-
-                        // Check to see if it uses cookie Jars!
-                        List<Cookie> cookiesInJar = montoya.http().cookieJar().cookies();
-                        boolean oneNotMatched = false;
-                        boolean anyParamMatched = false;
-
-                        for (Cookie cookieItem : cookiesInJar) {
-                            if (cookieItem.domain().equals(this.hostname)) {
-                                String currentCookieJarParam = cookieItem.name() + "=" + cookieItem.value() + ";";
-                                if (this.sentCookies.contains(currentCookieJarParam)) {
-                                    anyParamMatched = true;
-                                } else {
-                                    oneNotMatched = true;
-                                }
-                                if (anyParamMatched && oneNotMatched) {
-                                    break; // we do not need to analyse it more!
-                                }
+                    for (Cookie cookieItem : cookiesInJar) {
+                        if (cookieItem.domain().equals(this.hostname)) {
+                            String currentCookieJarParam = cookieItem.name() + "=" + cookieItem.value() + ";";
+                            if (this.sentCookies.contains(currentCookieJarParam)) {
+                                anyParamMatched = true;
+                            } else {
+                                oneNotMatched = true;
                             }
-                            // set cookie jar usage status
-                            if (oneNotMatched && anyParamMatched) {
-                                this.usesCookieJar = CookieJarStatus.PARTIALLY;
-                            } else if (!oneNotMatched && anyParamMatched) {
-                                this.usesCookieJar = CookieJarStatus.YES;
+                            if (anyParamMatched && oneNotMatched) {
+                                break; // we do not need to analyse it more!
                             }
                         }
-                        //handle different headers
-                    } else if (header.name().equalsIgnoreCase("referer")) {
-                        this.referrerURL = header.value();
-                    } else if (header.name().equalsIgnoreCase("content-type")) {
-                        this.requestContentType = header.value();
-                    } else if (header.name().equalsIgnoreCase("origin")) {
-                        this.origin = header.value();
+                        // set cookie jar usage status
+                        if (oneNotMatched && anyParamMatched) {
+                            this.usesCookieJar = CookieJarStatus.PARTIALLY;
+                        } else if (!oneNotMatched && anyParamMatched) {
+                            this.usesCookieJar = CookieJarStatus.YES;
+                        }
                     }
                 }
             }
+            //handle different headers
+            if (header.name().equalsIgnoreCase("referer")) {
+                this.referrerURL = header.value();
+            }
+            if (header.name().equalsIgnoreCase("content-type")) {
+                this.requestContentType = header.value();
+            }
+            if (header.name().equalsIgnoreCase("origin")) {
+                this.origin = header.value();
+            }
+        }
+        this.complete = true;
+        return Status.AWAITING_RESPONSE;
+    }
+
+//    private String getStatusText(int statusCode) {
+//        switch (statusCode) {
+//            case 200: return "OK";
+//            case 301: return "Moved Permanently";
+//            case 302: return "Found";
+//            case 400: return "Bad Request";
+//            case 401: return "Unauthorized";
+//            case 403: return "Forbidden";
+//            case 404: return "Not Found";
+//            case 500: return "Internal Server Error";
+//            default: return "Unknown";
+//        }
+//    }
+        private Status processResponse () {
+            if (response == null) {
+                return Status.FAILED_PROCESS;
+            }
+//            // resets the reflected parameters
+//            reflectedParameters = new HashSet<>();
+//            // basic response info
+//            this.responseStatus = response.statusCode();
+//            //this.responseStatusText = getStatusText(this.responseStatus);
+//            this.responseBodyLength = this.response.body().length();
+//            this.responseMimeType = response.statedMimeType();
+//            this.responseInferredMimeType = response.inferredMimeType();
+//
+//            // 1. process headers
+//            Map<String, String> headers = response.headers().stream()
+//                    .collect(Collectors.toMap(HttpHeader::name, HttpHeader::value, (s, s2) -> {
+//                        s += ", " + s2;
+//                        return s;
+//                    }, () -> new TreeMap<>(String.CASE_INSENSITIVE_ORDER)));
+//
+//            responseHeaders = response.headers();
+//
+//            // finds headers that could affect processing
+//            if (headers.containsKey("Location")) {
+//                this.redirectURL = headers.get("Location");
+//            }
+//
+//            // extract response content type
+//            if (headers.containsKey("content-type")) {
+//                this.responseContentType = headers.get("content-type");
+//            }
+//
+//            // process cookies from response headers
+//            this.newCookies = response.cookies().stream().map(cookie -> String.format("%s=%s", cookie.name(), cookie.value())).collect(Collectors.toList());
+//            this.hasSetCookies = !newCookies.isEmpty();
+//
+//            // parse date header
+//            if (this.responseDateTime == null && headers.containsKey("Date")) {
+//                try {
+//                    SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ENGLISH);
+//                    this.responseDateTime = sdf.parse(headers.get("Date"));
+//                } catch (ParseException e) {
+//                    this.responseDateTime = null;
+//                }
+//            }
+//
+//            if (responseDateTime != null) {
+//                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//                this.formattedResponseTime = sdf.format(responseDateTime);
+//            } else {
+//                this.formattedResponseTime = "";
+//            }
+//
+//            // calculate response delay
+//            if (requestDateTime != null && responseDateTime != null) {
+//                this.requestResponseDelay = (int) (responseDateTime.getTime() - requestDateTime.getTime());
+//            }
+//
+//            // 2. process body
+//
+//            String responseBody = response.bodyToString();
+//            if (responseBody == null || responseBody.isEmpty()) {
+//                return Status.FAILED_PROCESS;
+//            }
+//            reflectedParameters = request.parameters().stream()
+//                    .filter((param -> isReflected(responseBody, param.value())))
+//                    .map(HttpParameter::name)
+//                    .collect(Collectors.toSet());
+//
+//            if (this.responseMimeType != null && this.responseMimeType.toString().toLowerCase().contains("html")) {
+//                this.title = extractHtmlTitle(responseBody);
+//            }
+//
+//            for (HttpParameter param : request.parameters()) {
+//                String value = param.value();
+//                for (HttpHeader header : response.headers()) {
+//                    if (header.value().contains(value)) {
+//                        reflectedParameters.add(param.name());
+//                        break;
+//                    }
+//                }
+//            }
             this.complete = true;
             return Status.PROCESSED;
-        } else {
-            return Status.FAILED_PROCESS;
         }
-    }
-
-    // ill make this work eventually
-//    // change to make relevant to tidyburp
-    private Status processResponse() {
-          if (this.response != null) {
-              // resets the reflected parameters
-              reflectedParameters = new HashSet<>();
-              // basic response info
-              this.responseStatus = response.statusCode();
-              this.responseBodyLength = response.body().length();
-              this.responseMimeType = response.statedMimeType();
-              this.responseInferredMimeType = response.inferredMimeType();
-
-              // 1. process headers
-              Map<String, String> headers = response.headers().stream()
-                      .collect(Collectors.toMap(HttpHeader::name, HttpHeader::value, (s, s2) -> {
-                          s += ", " + s2;
-                          return s;
-                      }, () -> new TreeMap<>(String.CASE_INSENSITIVE_ORDER)));
-
-              responseHeaders = response.headers();
-
-              // finds headers that could affect processing
-              if (headers.containsKey("Location")) {
-                  this.redirectURL = headers.get("Location");
-              }
-
-              // extract response content type
-              if (headers.containsKey("content-type")) {
-                  this.responseContentType = headers.get("content-type");
-              }
-
-              // process cookies from response headers
-              this.newCookies = response.cookies().stream().map(cookie -> String.format("%s=%s", cookie.name(), cookie.value())).collect(Collectors.toList());
-              this.hasSetCookies = !newCookies.isEmpty();
-
-              // parse date header
-              if (this.responseDateTime == null && headers.containsKey("Date")) {
-                  try {
-                      SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ENGLISH);
-                      this.responseDateTime = sdf.parse(headers.get("Date"));
-                  } catch (ParseException e) {
-                      this.responseDateTime = null;
-                  }
-              }
-
-              if (responseDateTime != null) {
-                  SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                  this.formattedResponseTime = sdf.format(responseDateTime);
-              } else {
-                  this.formattedResponseTime = "";
-              }
-
-              // calculate response delay
-              if (requestDateTime != null && responseDateTime != null) {
-                  this.requestResponseDelay = (int) (responseDateTime.getTime() - requestDateTime.getTime());
-              }
-
-              // 2. process body
-
-              String responseBody = response.bodyToString();
-
-              reflectedParameters = request.parameters().stream()
-                      .filter((param -> isReflected(responseBody, param.value())))
-                      .map(HttpParameter::name)
-                      .collect(Collectors.toSet());
-
-              if (this.responseMimeType != null && this.responseMimeType.toString().toLowerCase().contains("html")) {
-                  this.title = extractHtmlTitle(responseBody);
-              }
-
-              for (HttpParameter param : request.parameters()) {
-                  String value = param.value();
-                  for (HttpHeader header : response.headers()) {
-                      if (header.value().contains(value)) {
-                          reflectedParameters.add(param.name());
-                          break;
-                      }
-                  }
-              }
-          } else {
-              System.out.print("Response object is null");
-          }
-        this.complete = true;
-        return Status.PROCESSED;
-    }
-
-    public void setTag(String tag) {
-        tags.clear();
-        tags.add(tag);
-    }
 
 
-    public void addTag(String tag) {
-        if (!tags.contains(tag)) {
+        public void setTag (String tag){
+            tags.clear();
             tags.add(tag);
         }
-    }
 
 
-    public String getFirstTag() {
-        return tags.isEmpty() ? "" : tags.get(0);
-    }
-
-
-    public List<String> getTags() {
-        return tags;
-    }
-
-
-    public void removeTag(String tag) {
-        tags.remove(tag);
-    }
-
-
-    public void clearTags() {
-        tags.clear();
-    }
-
-    public byte[] getRequestBytes() {
-        return this.request.toByteArray().getBytes();
-    }
-
-    private boolean isValidUri(String uri) {
-        try {
-            URI tempUri = new URI(uri);
-            return tempUri.getHost() != null;
-        } catch (URISyntaxException e){
-            return false;
+        public void addTag (String tag){
+            if (!tags.contains(tag)) {
+                tags.add(tag);
+            }
         }
-    }
 
-    private boolean isReflected (String responseBody, String paramValue) {
-        return responseBody != null && responseBody.contains(paramValue);
-    }
 
-    private String extractHtmlTitle(String responseBody) {
-        if (responseBody == null) {
+        public String getFirstTag () {
+            return tags.isEmpty() ? "" : tags.get(0);
+        }
+
+
+        public List<String> getTags () {
+            return tags;
+        }
+
+
+        public void removeTag (String tag){
+            tags.remove(tag);
+        }
+
+
+        public void clearTags () {
+            tags.clear();
+        }
+
+        public byte[] getRequestBytes () {
+            return this.request.toByteArray().getBytes();
+        }
+
+        private boolean isValidUri (String uri){
+            try {
+                URI tempUri = new URI(uri);
+                return tempUri.getHost() != null;
+            } catch (URISyntaxException e) {
+                return false;
+            }
+        }
+
+        private boolean isReflected (String responseBody, String paramValue){
+            return responseBody != null && responseBody.contains(paramValue);
+        }
+
+        private String extractHtmlTitle (String responseBody){
+            if (responseBody == null) {
+                return null;
+            }
+            Matcher titlePatternMatcher = HTML_TITLE_PATTERN.matcher(responseBody);
+            if (titlePatternMatcher.find()) {
+                return this.title = titlePatternMatcher.group(1);
+            }
             return null;
         }
-        Matcher titlePatternMatcher = HTML_TITLE_PATTERN.matcher(responseBody);
-        if (titlePatternMatcher.find()) {
-            return this.title = titlePatternMatcher.group(1);
-        }
-        return null;
-    }
 
-    // TODO: REPLACE.
-    // temporary method to make the week 2 feature work, need to make LogEntry more like Logger++ probably
+        // TODO: REPLACE.
+        // temporary method to make the week 2 feature work, need to make LogEntry more like Logger++ probably
 //    public List<Object> getData() {
 //        return Arrays.asList(
 //                this.number, // int
@@ -546,34 +574,41 @@ public class LogEntry {
 //        );
 //    }
 
-    public List<Object> getData() {
-        return Arrays.asList(
-                this.number, // int
-                this.hostname != null ? this.hostname : "N/A", // String w/o port number
-                this.httpMethod != null ? this.httpMethod : "UNKNOWN", // String
-                this.tag != null ? this.tag : "NO_TAG", // Request tag // String
-                this.request != null ? this.request.url() : "N/A", // URL from request
-                //this.parameters != null ? this.request.parameters() : new ArrayList<>(), // Parameters
-                this.request.parameters(),
-                this.edited, // Boolean: edited status
-                this.statusCode != null ? this.statusCode : "UNKNOWN", // Response status code
-                this.length, // Response length
-                this.responseMimeType != null ? this.responseMimeType : "UNKNOWN", // Response mime type
-                this.extension != null ? this.extension : "N/A", // File extension
-                this.title != null ? this.title : "Untitled", // Page title
-                this.tls != null ? this.tls : "N/A", // TLS info
-                this.ip != null ? this.ip : "N/A", // IP address
-                this.cookies != null ? this.cookies : "N/A", // Cookies
-                this.requestDateTime != null ? this.requestDateTime.toString() : "N/A", // Request datetime
-                this.status != null ? this.status.toString() : "N/A", // Status
-                //this.responseDateTime != null ? this.responseDateTime.toString() : "N/A", // Response datetime
-                this.tags != null ? this.tags : new ArrayList<>() // Tags
-        );
+        public List<Object> getData () {
+            return Arrays.asList(
+                    this.number, // int
+                    this.hostname != null ? this.hostname : "N/A", // String w/o port number
+                    this.httpMethod != null ? this.httpMethod : "UNKNOWN", // String
+                    this.tag != null ? this.tag : "NO_TAG", // Request tag // String
+                    //this.request != null ? this.request.url() : "N/A", // URL from request
+                    this.urlString != null ? this.urlString : "N/A",
+                    this.parameters != null ? this.request.parameters() : new ArrayList<>(), // Parameters
+                    // need to get the processed ones instead
+                    //this.request.parameters(),
+                    // everything past here is null
+                    this.edited, // Boolean: edited status
+                    this.responseStatus != -1 ? this.responseStatus : "UNKNOWN", // Response status code
+                    //this.responseStatus = response.statusCode() != -1 ? response.statusCode() : 0
+                    //this.response.statusCode(),
+                    //this.responseStatus,
+                    this.responseBodyLength, // Response length
+                    this.responseMimeType != null ? this.responseMimeType : "UNKNOWN", // Response mime type
+                    this.extension != null ? this.extension : "N/A", // File extension
+                    this.title != null ? this.title : "Untitled", // Page title
+                    this.tls != null ? this.tls : "N/A", // TLS info
+                    this.ip != null ? this.ip : "N/A", // IP address
+                    // should be sentcookies?
+                    this.sentCookies != null ? this.sentCookies : "N/A", // Cookies
+                    //this.cookies != null ? this.cookies : "N/A", // Cookies
+                    // these work okay
+                    this.requestDateTime != null ? this.requestDateTime.toString() : "N/A", // Request datetime
+                    this.status != null ? this.status.toString() : "N/A", // Status
+                    //this.responseDateTime != null ? this.responseDateTime.toString() : "N/A", // Response datetime
+                    this.tags != null ? this.tags : new ArrayList<>() // Tags
+            );
+        }
+
+        public enum Status {
+            UNPROCESSED, AWAITING_RESPONSE, PROCESSED, FAILED_PROCESS,
+        }
     }
-
-    public enum Status {
-        UNPROCESSED, AWAITING_RESPONSE, PROCESSED, FAILED_PROCESS,
-    }
-
-
-}

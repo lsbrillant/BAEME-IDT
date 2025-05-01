@@ -16,8 +16,10 @@ public class LogProcessor {
 //    }
 
     public void process(LogEntry entry, HttpRequest request, HttpResponse response) {
+        if (request != null) {
+            entry.setRequest(request);
+        }
         if (response != null) {
-            // If no existing entry is found, create a new one for the request
             entry.setResponse(response);
             entry.setStatus(LogEntry.Status.PROCESSED);
         }
