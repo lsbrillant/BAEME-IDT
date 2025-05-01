@@ -19,7 +19,7 @@ public class LogHTTPHandler implements HttpHandler {
         LogEntry entry = new LogEntry(requestToBeSent, arrivalTime);
         entry.setMessageId(requestToBeSent.messageId());
         this.logTableController.getLogTableModel().addEntry(entry);
-        logProcessor.process(entry, requestToBeSent,null);
+        logProcessor.processIfComplete(entry, requestToBeSent,null);
         return RequestToBeSentAction.continueWith(requestToBeSent);
     }
 
@@ -28,12 +28,14 @@ public class LogHTTPHandler implements HttpHandler {
         // but I don't wanna break this cuz it's working rn lol
         List<LogEntry> entries = logTableController.getLogTableModel().getData();
         for (LogEntry entry : entries) {
-            if (entry.getMessageId() == responseReceived.messageId()) {
+            if ((long) entry.getMessageId() == responseReceived.messageId()) {
                 entry.setResponse(responseReceived);
-                logProcessor.process(entry,null, responseReceived);
+                logProcessor.processIfComplete(entry, entry.getRequest(), responseReceived);
                 break;
             }
         }
+        //logProcessor.updateEntryWithResponse(logTableController, responseReceived.messageId(), responseReceived);
+        //logProcessor.updateEntryWithResponse(responseReceived.messageId(), new Date(), responseReceived);
         return ResponseReceivedAction.continueWith(responseReceived);
     }
 }

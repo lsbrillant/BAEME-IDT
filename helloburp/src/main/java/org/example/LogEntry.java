@@ -29,6 +29,8 @@ import burp.api.montoya.sitemap.SiteMap;
 import burp.api.montoya.ui.UserInterface;
 import burp.api.montoya.utilities.Utilities;
 import burp.api.montoya.websocket.WebSockets;
+
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -50,18 +52,20 @@ public class LogEntry {
     @Setter
     private HttpRequest request;
     @Getter
-    @Setter
+    //@Setter
     private HttpResponse response;
     private Date requestDateTime = new Date(0);
     private Date responseDateTime = new Date(0);
     @Setter
     @Getter
-    private int messageId;
+    public int messageId;
     private String requestHttpVersion;
 
     // Java Status class
     public Status previousStatus;
     public Status status;
+
+    public debugStatement debug;
 
     private static final Pattern HTML_TITLE_PATTERN = Pattern.compile("<title>(.*?)</title>", Pattern.CASE_INSENSITIVE);
 
@@ -103,7 +107,6 @@ public class LogEntry {
     private String title;
     private String tls;
     private String ip;
-    private String cookies;
     private String time;
 
     // may need
@@ -113,7 +116,6 @@ public class LogEntry {
     private String protocol;
     private boolean isSSL;
     private String origin;
-    // private String cookies; // already defined
     private boolean hasCookieParam;
     private String requestContentType;
 
@@ -144,6 +146,9 @@ public class LogEntry {
         }
     }
 
+    private Date responseArrivalTime;
+
+
     // TODO: define process, processRequest, processResponse methods
     // These methods should extract and assign relevant fields
 
@@ -163,10 +168,19 @@ public class LogEntry {
         this.requestDateTime = requestDateTime;
     }
 
+    public LogEntry(HttpRequest request, HttpResponse response) {
+        this(request);
+        this.response = response;
+    }
+
     // getter methods
 
     public UUID getRequestId() {
         return this.requestId;
+    }
+
+    public void setResponse(HttpResponse response) {
+        this.response = response;
     }
 
     public int getNumber() {
@@ -187,6 +201,14 @@ public class LogEntry {
 
     public boolean isEdited() {
         return edited;
+    }
+
+    public Date getResponseArrivalTime() {
+        return responseArrivalTime;
+    }
+
+    public void setResponseArrivalTime(Date responseArrivalTime) {
+        this.responseArrivalTime = responseArrivalTime;
     }
 
     public Short getResponseStatus() {
@@ -217,10 +239,6 @@ public class LogEntry {
         return ip;
     }
 
-    public String getCookies() {
-        return cookies;
-    }
-
     public String getFormattedResponseTime() {
         return formattedResponseTime;
     }
@@ -230,11 +248,10 @@ public class LogEntry {
     public boolean process() {
         previousStatus = this.status;
         switch (this.status) {
-            case UNPROCESSED: {
+            case UNPROCESSED -> {
                 this.status = processRequest();
-                break;
             }
-            case AWAITING_RESPONSE: {
+            case AWAITING_RESPONSE -> {
                 if (this.response == null) {
                     this.status = Status.FAILED_PROCESS;
                     return false;
@@ -243,16 +260,16 @@ public class LogEntry {
                 return this.status == Status.PROCESSED;
                 // return true;
             }
-            case PROCESSED: {
+            case PROCESSED -> {
                 return true;
             }
-            case FAILED_PROCESS: {
+            case FAILED_PROCESS -> {
                 reprocess();
                 // return this.status == Status.PROCESSED;
-                break;
             }
-            default:
+            default -> {
                 return false;
+            }
         }
         return this.status == Status.PROCESSED;
     }
@@ -269,6 +286,19 @@ public class LogEntry {
     public void setStatus(Status status) {
         this.status = status;
     }
+
+
+    public debugStatement getDebug() {
+        return debug;
+    }
+
+    public void setDebugStatement(debugStatement debug) {
+        this.debug = debug;
+    }
+
+//    public void setResponse(HttpResponse response) {
+//        this.response = response;
+//    }
 
     public Status getPreviousStatus() {
         return previousStatus;
@@ -387,6 +417,14 @@ public class LogEntry {
         return Status.AWAITING_RESPONSE;
     }
 
+    public boolean processRequestOnly() {
+        try{
+            processRequest();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 //    private String getStatusText(int statusCode) {
 //        switch (statusCode) {
 //            case 200: return "OK";
@@ -400,91 +438,102 @@ public class LogEntry {
 //            default: return "Unknown";
 //        }
 //    }
+
+    public boolean processResponseOnly() {
+        try{
+            processResponse();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    // return values are null...
+    // not making a difference
         private Status processResponse () {
             if (response == null) {
                 return Status.FAILED_PROCESS;
             }
-//            // resets the reflected parameters
-//            reflectedParameters = new HashSet<>();
-//            // basic response info
-//            this.responseStatus = response.statusCode();
-//            //this.responseStatusText = getStatusText(this.responseStatus);
-//            this.responseBodyLength = this.response.body().length();
-//            this.responseMimeType = response.statedMimeType();
-//            this.responseInferredMimeType = response.inferredMimeType();
-//
-//            // 1. process headers
-//            Map<String, String> headers = response.headers().stream()
-//                    .collect(Collectors.toMap(HttpHeader::name, HttpHeader::value, (s, s2) -> {
-//                        s += ", " + s2;
-//                        return s;
-//                    }, () -> new TreeMap<>(String.CASE_INSENSITIVE_ORDER)));
-//
-//            responseHeaders = response.headers();
-//
-//            // finds headers that could affect processing
-//            if (headers.containsKey("Location")) {
-//                this.redirectURL = headers.get("Location");
-//            }
-//
-//            // extract response content type
-//            if (headers.containsKey("content-type")) {
-//                this.responseContentType = headers.get("content-type");
-//            }
-//
-//            // process cookies from response headers
-//            this.newCookies = response.cookies().stream().map(cookie -> String.format("%s=%s", cookie.name(), cookie.value())).collect(Collectors.toList());
-//            this.hasSetCookies = !newCookies.isEmpty();
-//
-//            // parse date header
-//            if (this.responseDateTime == null && headers.containsKey("Date")) {
-//                try {
-//                    SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ENGLISH);
-//                    this.responseDateTime = sdf.parse(headers.get("Date"));
-//                } catch (ParseException e) {
-//                    this.responseDateTime = null;
-//                }
-//            }
-//
-//            if (responseDateTime != null) {
-//                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//                this.formattedResponseTime = sdf.format(responseDateTime);
-//            } else {
-//                this.formattedResponseTime = "";
-//            }
-//
-//            // calculate response delay
-//            if (requestDateTime != null && responseDateTime != null) {
-//                this.requestResponseDelay = (int) (responseDateTime.getTime() - requestDateTime.getTime());
-//            }
-//
-//            // 2. process body
-//
-//            String responseBody = response.bodyToString();
-//            if (responseBody == null || responseBody.isEmpty()) {
-//                return Status.FAILED_PROCESS;
-//            }
-//            reflectedParameters = request.parameters().stream()
-//                    .filter((param -> isReflected(responseBody, param.value())))
-//                    .map(HttpParameter::name)
-//                    .collect(Collectors.toSet());
-//
-//            if (this.responseMimeType != null && this.responseMimeType.toString().toLowerCase().contains("html")) {
-//                this.title = extractHtmlTitle(responseBody);
-//            }
-//
-//            for (HttpParameter param : request.parameters()) {
-//                String value = param.value();
-//                for (HttpHeader header : response.headers()) {
-//                    if (header.value().contains(value)) {
-//                        reflectedParameters.add(param.name());
-//                        break;
-//                    }
-//                }
-//            }
-            this.complete = true;
-            return Status.PROCESSED;
-        }
+            // resets the reflected parameters
+            reflectedParameters = new HashSet<>();
+            // basic response info
+            this.responseStatus = response.statusCode();
+            //this.responseStatusText = getStatusText(this.responseStatus);
+            this.responseBodyLength = this.response.body().length();
+            this.responseMimeType = response.statedMimeType();
+            this.responseInferredMimeType = response.inferredMimeType();
+
+            // 1. process headers
+            Map<String, String> headers = response.headers().stream()
+                    .collect(Collectors.toMap(HttpHeader::name, HttpHeader::value, (s, s2) -> {
+                        s += ", " + s2;
+                        return s;
+                    }, () -> new TreeMap<>(String.CASE_INSENSITIVE_ORDER)));
+
+            responseHeaders = response.headers();
+
+            // finds headers that could affect processing
+            if (headers.containsKey("Location")) {
+                this.redirectURL = headers.get("Location");
+            }
+
+            // extract response content type
+            if (headers.containsKey("content-type")) {
+                this.responseContentType = headers.get("content-type");
+            }
+
+            // process cookies from response headers
+            this.newCookies = response.cookies().stream().map(cookie -> String.format("%s=%s", cookie.name(), cookie.value())).collect(Collectors.toList());
+            this.hasSetCookies = !newCookies.isEmpty();
+
+            // parse date header
+            if (this.responseDateTime == null && headers.containsKey("Date")) {
+                try {
+                    SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ENGLISH);
+                    this.responseDateTime = sdf.parse(headers.get("Date"));
+                } catch (ParseException e) {
+                    this.responseDateTime = null;
+                }
+            }
+
+            if (responseDateTime != null) {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                this.formattedResponseTime = sdf.format(responseDateTime);
+            } else {
+                this.formattedResponseTime = "";
+            }
+
+            // calculate response delay
+            if (requestDateTime != null && responseDateTime != null) {
+                this.requestResponseDelay = (int) (responseDateTime.getTime() - requestDateTime.getTime());
+            }
+
+            // 2. process body
+
+            String responseBody = response.bodyToString();
+            if (responseBody == null || responseBody.isEmpty()) {
+                return Status.FAILED_PROCESS;
+            }
+            reflectedParameters = request.parameters().stream()
+                    .filter((param -> isReflected(responseBody, param.value())))
+                    .map(HttpParameter::name)
+                    .collect(Collectors.toSet());
+
+            if (this.responseMimeType != null && this.responseMimeType.toString().toLowerCase().contains("html")) {
+                this.title = extractHtmlTitle(responseBody);
+            }
+
+            for (HttpParameter param : request.parameters()) {
+                String value = param.value();
+                for (HttpHeader header : response.headers()) {
+                    if (header.value().contains(value)) {
+                        reflectedParameters.add(param.name());
+                        break;
+                    }
+                }
+            }
+                this.complete = true;
+                return Status.PROCESSED;
+            }
 
 
         public void setTag (String tag){
@@ -597,18 +646,21 @@ public class LogEntry {
                     this.title != null ? this.title : "Untitled", // Page title
                     this.tls != null ? this.tls : "N/A", // TLS info
                     this.ip != null ? this.ip : "N/A", // IP address
-                    // should be sentcookies?
                     this.sentCookies != null ? this.sentCookies : "N/A", // Cookies
-                    //this.cookies != null ? this.cookies : "N/A", // Cookies
                     // these work okay
                     this.requestDateTime != null ? this.requestDateTime.toString() : "N/A", // Request datetime
                     this.status != null ? this.status.toString() : "N/A", // Status
+                    this.debug != null ? this.debug : "N/A",
                     //this.responseDateTime != null ? this.responseDateTime.toString() : "N/A", // Response datetime
                     this.tags != null ? this.tags : new ArrayList<>() // Tags
             );
         }
 
         public enum Status {
-            UNPROCESSED, AWAITING_RESPONSE, PROCESSED, FAILED_PROCESS,
+            UNPROCESSED, AWAITING_RESPONSE, PROCESSED, FAILED_PROCESS, DUMMY,
         }
+
+    public enum debugStatement {
+        WORKING_REQUEST, NOT_WORKING_REQUEST, WORKING_RESPONSE, NOT_WORKING_RESPONSE,
     }
+}

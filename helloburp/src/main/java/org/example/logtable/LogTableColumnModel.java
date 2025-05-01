@@ -34,6 +34,7 @@ public class LogTableColumnModel extends DefaultTableColumnModel {
         defaultColumns.add(Arrays.asList("Time", order++, true, "", "Time"));
         // added
         defaultColumns.add(Arrays.asList("Status", order, true, "", "Status"));
+        defaultColumns.add(Arrays.asList("Debug", order, true, "", "Debug"));
         defaultColumns.add(Arrays.asList("Tags", order, true, "", "Tags"));
         for (int i = 0; i < defaultColumns.size(); i++) {
             LogTableColumn column = new LogTableColumn();
