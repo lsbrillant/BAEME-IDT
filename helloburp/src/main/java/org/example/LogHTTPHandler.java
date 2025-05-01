@@ -34,8 +34,6 @@ public class LogHTTPHandler implements HttpHandler {
                 break;
             }
         }
-        //logProcessor.updateEntryWithResponse(logTableController, responseReceived.messageId(), responseReceived);
-        //logProcessor.updateEntryWithResponse(responseReceived.messageId(), new Date(), responseReceived);
         return ResponseReceivedAction.continueWith(responseReceived);
     }
 }

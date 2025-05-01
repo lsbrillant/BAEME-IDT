@@ -57,29 +57,39 @@ public class LogProcessor {
                 boolean requestProcessed = entry.processRequestOnly();
                 if (requestProcessed) {
                     entry.setStatus(LogEntry.Status.AWAITING_RESPONSE);
-                    entry.setDebugStatement(LogEntry.debugStatement.WORKING_REQUEST);
+                    //entry.setDebugStatement(LogEntry.debugStatement.WORKING_REQUEST);
                 } else {
-                    entry.setStatus(LogEntry.Status.FAILED_PROCESS);
-                    entry.setDebugStatement(LogEntry.debugStatement.NOT_WORKING_REQUEST);
+                    entry.setStatus(LogEntry.Status.FAILED);
+                    //entry.setDebugStatement(LogEntry.debugStatement.NOT_WORKING_REQUEST);
                 }
-                return;
+                //return;
             }
+        }
+
+        if (response == null) {
+            if (entry.getStatus() != LogEntry.Status.AWAITING_RESPONSE) {
+                entry.setStatus(LogEntry.Status.NO_PROCESS);
+                //entry.setDebugStatement(LogEntry.debugStatement.NOT_WORKING_RESPONSE);
+            }
+            return;
         }
 
         // Process response
-        if (response != null) {
+        //if (response != null) {
             entry.setResponse(response);
             // Now process the full entry (with request + response)
-            //boolean processSuccess = entry.process();
-            boolean processSuccess = entry.processResponseOnly();
+            boolean processSuccess = entry.process();
             if (processSuccess) { // process succeeded
                 entry.setStatus(LogEntry.Status.PROCESSED);
-                entry.setDebugStatement(LogEntry.debugStatement.WORKING_RESPONSE);
+                //entry.setDebugStatement(LogEntry.debugStatement.WORKING_RESPONSE);
             } else { // processing response didn't work
-                entry.setStatus(LogEntry.Status.FAILED_PROCESS);
-                entry.setDebugStatement(LogEntry.debugStatement.NOT_WORKING_RESPONSE);
-
+                entry.setStatus(LogEntry.Status.FAILED);
+                //entry.setDebugStatement(LogEntry.debugStatement.NOT_WORKING_RESPONSE);
             }
-        }
+        //}
+//        if (response == null && request != null && entry.getStatus() != LogEntry.Status.AWAITING_RESPONSE) {
+//            entry.setStatus(LogEntry.Status.NO_PROCESS);
+//            entry.setDebugStatement(LogEntry.debugStatement.NOT_WORKING_RESPONSE);
+//        }
     }
 }
