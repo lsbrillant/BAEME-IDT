@@ -1,6 +1,7 @@
 package org.example.logtable;
 
 import lombok.Setter;
+import org.example.LogEntry;
 import org.example.requestviewer.RequestViewerController;
 
 public class LogTableController {

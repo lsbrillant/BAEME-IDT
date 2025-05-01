@@ -5,6 +5,7 @@ import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.proxy.ProxyHttpRequestResponse;
 import org.example.logtable.LogTableController;
+import org.example.logtable.LogTableModel;
 //import burp.api.montoya.ui.UserInterface;
 
 import java.util.ArrayList;
@@ -29,7 +30,9 @@ public class TidyBurp implements BurpExtension {
 //            data.add(Arrays.asList(req.method(), req.url(), req.pathWithoutQuery(), req.query()));
 //        }
         LogTableController controller = new LogTableController();
-        montoyaApi.http().registerHttpHandler(new LogHTTPHandler(controller));
+        LogTableModel logTableModel = controller.getLogTableModel();
+        LogProcessor processor = new LogProcessor();
+        montoyaApi.http().registerHttpHandler(new LogHTTPHandler(controller, processor));
 
         AnnotationsTab annotationsTab = new AnnotationsTab(controller, montoya);
         montoyaApi.userInterface().registerSuiteTab(annotationsTab.name(), annotationsTab.getPanel());
