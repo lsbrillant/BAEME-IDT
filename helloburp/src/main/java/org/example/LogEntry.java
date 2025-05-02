@@ -641,7 +641,6 @@ public class LogEntry {
                     this.number, // int
                     this.hostname != null ? this.hostname : "N/A", // String w/o port number
                     this.httpMethod != null ? this.httpMethod : "UNKNOWN", // String
-                    this.tag != null ? this.tag : "NO_TAG", // Request tag // String
                     //this.request != null ? this.request.url() : "N/A", // URL from request
                     this.urlString != null ? this.urlString : "N/A",
                     this.parameters != null ? this.request.parameters() : new ArrayList<>(), // Parameters
