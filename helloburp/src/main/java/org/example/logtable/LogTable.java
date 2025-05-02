@@ -12,7 +12,6 @@ public class LogTable extends JTable {
 
     LogTable(LogTableController controller) {
         super(controller.getLogTableModel());
-        this.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         this.controller = controller;
         this.sorter = new TableRowSorter<>(controller.getLogTableModel());
         this.setRowSorter(sorter);
