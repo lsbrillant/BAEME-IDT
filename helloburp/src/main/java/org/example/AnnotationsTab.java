@@ -20,23 +20,10 @@ public class AnnotationsTab {
 
     public AnnotationsTab(LogTableController logTableController, MontoyaApi montoya) {
         this.panel = new JPanel(new BorderLayout());
-        Object[][] data = {
-                {1, "John", 25},
-                {2, "Sarah", 30},
-                {3, "Mike", 35}
-        };
-//        AbstractTableModel dataModel = new AbstractTableModel() {
-//            public int getColumnCount() { return getRowCount() == 0 ? 0 : data.getFirst().size(); }
-//            public int getRowCount() { return data.size();}
-//            public Object getValueAt(int row, int col) { return data.get(row).get(col); }
-//        };
-//        String[] columnNames = {"ID", "Name", "Age"};
-//        DefaultTableModel model = new DefaultTableModel(data, columnNames);
-//        JTable logTable = new JTable(model);
 
         LogTable logTable = logTableController.getLogTable();
         JScrollPane scrollPane = new JScrollPane(logTable, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED); // TODO: change column width defaults
 
         RequestViewerController requestViewerController = new RequestViewerController(montoya);
         logTableController.setRequestViewerController(requestViewerController); // hack to avoid creating LogViewController

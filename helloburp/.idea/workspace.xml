@@ -9,7 +9,6 @@
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/AnnotationsTab.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/AnnotationsTab.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/FilterFeature.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/FilterFeature.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/logtable/LogTable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/logtable/LogTable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/logtable/LogTableModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/logtable/LogTableModel.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -185,6 +184,9 @@
       <workItem from="1745872067032" duration="10102000" />
       <workItem from="1745989346667" duration="6277000" />
       <workItem from="1746037799228" duration="370000" />
+      <workItem from="1746045022369" duration="5399000" />
+      <workItem from="1746063512930" duration="262000" />
+      <workItem from="1746076572762" duration="19858000" />
     </task>
     <servers />
   </component>

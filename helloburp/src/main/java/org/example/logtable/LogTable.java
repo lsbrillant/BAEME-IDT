@@ -12,6 +12,7 @@ public class LogTable extends JTable {
 
     LogTable(LogTableController controller) {
         super(controller.getLogTableModel());
+        this.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         this.controller = controller;
         this.sorter = new TableRowSorter<>(controller.getLogTableModel());
         this.setRowSorter(sorter);
@@ -40,5 +41,13 @@ public class LogTable extends JTable {
             this.sorter.setRowFilter(RowFilter.regexFilter(filter));
             ((JScrollPane) this.getParent().getParent()).getVerticalScrollBar().setValue(0); // maybe don't need this?
         }
+    }
+
+    public void setHeaderFilter(String headerName, String filterString, boolean inverted) {
+        ;
+    }
+
+    public void setCodeFilter(String codeFilter) {
+        ;
     }
 }

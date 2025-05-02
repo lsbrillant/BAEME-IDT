@@ -6,6 +6,8 @@ import com.coreyd97.BurpExtenderUtilities.HistoryField;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -33,7 +35,7 @@ public class FilterFeature extends JPanel {
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
                     // Update only when pressing enter after typing
-                    setFilter((String) searchField.getEditor().getItem());
+                    setFilter("search", (String) searchField.getEditor().getItem());
                     searchField.getRootPane().requestFocus(true); // ?
                 }
             }
@@ -41,6 +43,7 @@ public class FilterFeature extends JPanel {
 
         // Create filter field UI element and add interactivity to it
         ArrayList<String> columnNames = new ArrayList<>();
+        columnNames.add(""); // default to empty
         columnNames.add("Header");
         columnNames.add("Code"); // TODO: remove once this just becomes a column itself
         columnNames.addAll(Arrays.asList(logTableController.getLogTableModel().getColumnNames()));
@@ -52,14 +55,42 @@ public class FilterFeature extends JPanel {
             if (s != null && s.equals("Code")) {
                 this.activeFilterPanel.add(new JLabel("matches"));
                 JTextField codeField = new JTextField(5);
-                // TODO: add enter key listener to execute filter method
+
+                codeField.addKeyListener(new KeyAdapter() {
+                    @Override
+                    public void keyPressed(KeyEvent e) {
+                        if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+                            setFilter("code", codeField.getText());
+                        }
+                    }
+                });
                 this.activeFilterPanel.add(codeField);
             } else if (s != null && s.equals("Header")) {
-                String[] filterOptionsArr = {"present", "matches"};
+                JTextField headerField = new JTextField(15); // TODO: maybe make this bigger
+                String[] filterOptionsArr = {"", "present", "not present", "matches"};
                 JComboBox<String> filterOptionsField = new JComboBox<>(filterOptionsArr);
-                // TODO: above needs an action listener to check which one is checked
-                // if present, create JCheckBox with JLabel that says "inverted" or smth
-                // if absent, create JTextField like above
+
+                filterOptionsField.addActionListener(e1 -> {
+                    JComboBox<String> filterOptionBox = (JComboBox<String>) e1.getSource();
+                    String selectedFilterOption = (String) filterOptionBox.getSelectedItem();
+                    // this is a bit weird, but declaring this outside so we can remove it in the else block below
+                    JTextField headerFilterField = new JTextField(5);
+                    // TODO: above needs an action listener too
+                    if (selectedFilterOption.equals("matches")) {
+                        this.activeFilterPanel.add(headerFilterField);
+                    } else {
+                        if (this.activeFilterPanel.getComponent(this.activeFilterPanel.getComponentCount() - 1) instanceof JTextField) {
+                            this.activeFilterPanel.remove(this.activeFilterPanel.getComponentCount() - 1);
+                        }
+                        // TODO: do filtering stuff
+                        // headerName, filterString, inverted
+                        setFilter("header", headerField.getText(), null,
+                                selectedFilterOption.equals("present"));
+                    }
+                    this.activeFilterPanel.revalidate();
+                    this.activeFilterPanel.repaint();
+                });
+                this.activeFilterPanel.add(headerField);
                 this.activeFilterPanel.add(filterOptionsField);
             }
             this.activeFilterPanel.revalidate();
@@ -74,9 +105,20 @@ public class FilterFeature extends JPanel {
         this.add(searchField);
     }
 
-    public void clearFilter() {
-        this.logTableController.getLogTable().setFilter("");
-        formatFilter("");
+    public void clearFilter(String filterType) {
+        switch (filterType) {
+            case "search": {
+                this.logTableController.getLogTable().setFilter("");
+                formatFilter("");
+            }
+            case "code": {
+                this.logTableController.getLogTable().setCodeFilter("");
+            }
+            case "header": {
+                this.logTableController.getLogTable().setHeaderFilter("", "", false);
+            }
+        }
+
     }
 
     public void formatFilter(String string) {
@@ -88,17 +130,50 @@ public class FilterFeature extends JPanel {
         }
     }
 
-    public void setFilter(String filterString) {
-        if (filterString == null || filterString.equals("") || filterString.matches(" +")) {
-            clearFilter();
-        } else {
-            formatFilter(filterString);
-            logTableController.getLogTable().setFilter(filterString);
-        }
+    public void setFilter(String filterType, Object... args) {
+        switch (filterType) {
+            case "search": {
+                String filterString = (String) args[0];
+                if (filterString == null || filterString.equals("") || filterString.matches(" +")) {
+                    clearFilter(filterType);
+                } else {
+                    formatFilter(filterString);
+                    logTableController.getLogTable().setFilter(filterString);
+                }
 
-        LogTable logTable = logTableController.getLogTable();
-        if (logTable.getSelectedRow() != -1) {
-            logTable.scrollRectToVisible(logTable.getCellRect(logTable.getSelectedRow(), 0, true));
+                LogTable logTable = logTableController.getLogTable();
+                if (logTable.getSelectedRow() != -1) {
+                    logTable.scrollRectToVisible(logTable.getCellRect(logTable.getSelectedRow(), 0, true));
+                }
+            }
+            case "header": {
+                if (args[1] == null) { // if filterString is null (this means we're looking for existence of a header)
+                    logTableController.getLogTable().setHeaderFilter((String) args[0], null, (boolean) args[2]);
+                } else if (((String) args[1]).equals("")) {
+                    clearFilter(filterType);
+                } else { // filterString not null (we're looking for if a header matches something)
+                    logTableController.getLogTable().setHeaderFilter((String) args[0], (String) args[1], (boolean) args[2]);
+                }
+                LogTable logTable = logTableController.getLogTable();
+                if (logTable.getSelectedRow() != -1) {
+                    logTable.scrollRectToVisible(logTable.getCellRect(logTable.getSelectedRow(), 0, true));
+                }
+            }
+            case "code": {
+                String codeFilterString = (String) args[0];
+                if (codeFilterString.equals("") || codeFilterString.matches(" +")) {
+                    clearFilter(filterType);
+                } else {
+                    logTableController.getLogTable().setCodeFilter(codeFilterString);
+                }
+                LogTable logTable = logTableController.getLogTable();
+                if (logTable.getSelectedRow() != -1) {
+                    logTable.scrollRectToVisible(logTable.getCellRect(logTable.getSelectedRow(), 0, true));
+                }
+            }
+            default: {
+                break;
+            }
         }
     }
 }
