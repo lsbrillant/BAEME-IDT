@@ -40,8 +40,9 @@ public class LogTableModel extends AbstractTableModel {
             return row + 1;
         }
 
-        if (column == getColumnCount() - 1) {
-            return this.entries.get(row).getFirstTag();
+        String columnName = columnNames[column];
+        if ("Tags".equalsIgnoreCase(columnName)) {
+            return this.entries.get(row).getTags();
         }
 
         return this.entries.get(row).getData().get(column - 1);
@@ -63,8 +64,10 @@ public class LogTableModel extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object aValue, int row, int column) {
-        if (column == getColumnCount() - 1) {
-            this.entries.get(row).setTag((String) aValue);
+        String columnName = columnNames[column];
+        if ("Tags".equalsIgnoreCase(columnName) && aValue instanceof String tag) {
+            LogEntry entry = this.entries.get(row);
+            entry.addTag(tag);
             fireTableCellUpdated(row, column);
         }
     }
