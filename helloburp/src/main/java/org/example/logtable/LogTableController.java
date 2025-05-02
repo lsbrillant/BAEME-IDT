@@ -3,6 +3,8 @@ package org.example.logtable;
 import lombok.Setter;
 import org.example.LogEntry;
 import org.example.requestviewer.RequestViewerController;
+import java.util.List;
+
 
 public class LogTableController {
     private final LogTable logTable;
@@ -31,7 +33,27 @@ public class LogTableController {
         int selectedRow = logTable.getSelectedRow();
         if (selectedRow >= 0) {
             int modelRow = logTable.convertRowIndexToModel(selectedRow);
-            logTableModel.setValueAt(tag, modelRow, logTableModel.getColumnCount() - 1);
+            int tagColumnIndex = getTagsColumnIndex();
+
+            LogEntry entry = logTableModel.getRow(modelRow);
+            List<String> currentTags = entry.getTags();
+
+            if (currentTags.contains(tag)) {
+                entry.removeTag(tag);
+            } else {
+                entry.addTag(tag);
+            }
+
+            logTableModel.fireTableCellUpdated(modelRow, tagColumnIndex);
         }
+    }
+
+    private int getTagsColumnIndex() {
+        for (int i = 0; i < logTableModel.getColumnCount(); i++) {
+            if ("Tags".equalsIgnoreCase(logTableModel.getColumnName(i))) {
+                return i;
+            }
+        }
+        return -1;
     }
 }

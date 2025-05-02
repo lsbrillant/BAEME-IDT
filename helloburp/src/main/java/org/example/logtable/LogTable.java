@@ -4,13 +4,17 @@ import org.example.LogEntry;
 import org.example.requestviewer.RequestViewerController;
 
 import javax.swing.*;
+import javax.swing.table.TableRowSorter;
 
 public class LogTable extends JTable {
     private LogTableController controller;
+    private TableRowSorter<LogTableModel> sorter;
 
     LogTable(LogTableController controller) {
         super(controller.getLogTableModel());
         this.controller = controller;
+        this.sorter = new TableRowSorter<>(controller.getLogTableModel());
+        this.setRowSorter(sorter);
 
         this.getSelectionModel().addListSelectionListener(e -> {
             if(e.getValueIsAdjusting()) return;
@@ -26,5 +30,29 @@ public class LogTable extends JTable {
                 }
             }
         });
+        for (int i = 0; i < getColumnCount(); i++) {
+            if ("Tags".equalsIgnoreCase(getColumnName(i))) {
+                getColumnModel().getColumn(i).setCellRenderer(new MultiTagCellRenderer());
+                break;
+            }
+        }
+    }
+
+    public void setFilter(String filter) {
+        // TODO: verify that filter is valid regex first (?)
+        if (filter == null) {
+            this.sorter.setRowFilter(null);
+        } else {
+            this.sorter.setRowFilter(RowFilter.regexFilter(filter));
+            ((JScrollPane) this.getParent().getParent()).getVerticalScrollBar().setValue(0); // maybe don't need this?
+        }
+    }
+
+    public void setHeaderFilter(String headerName, String filterString, boolean inverted) {
+        ;
+    }
+
+    public void setCodeFilter(String codeFilter) {
+        ;
     }
 }

@@ -5,9 +5,11 @@ import org.example.LogEntry;
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
 
 public class LogTableModel extends AbstractTableModel {
     private final LogTableController controller;
+    @Getter
     private final String[] columnNames;
     private final List<LogEntry> entries;
 
@@ -39,6 +41,10 @@ public class LogTableModel extends AbstractTableModel {
             return row + 1;
         }
 
+        String columnName = columnNames[column];
+        if ("Tags".equalsIgnoreCase(columnName)) {
+            return this.entries.get(row).getTags();
+        }
         List<Object> data = entry.getData();
         return data.get(column);
 //
@@ -73,8 +79,10 @@ public class LogTableModel extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object aValue, int row, int column) {
-        if (column == getColumnCount() - 1) {
-            this.entries.get(row).setTag((String) aValue);
+        String columnName = columnNames[column];
+        if ("Tags".equalsIgnoreCase(columnName) && aValue instanceof String tag) {
+            LogEntry entry = this.entries.get(row);
+            entry.addTag(tag);
             fireTableCellUpdated(row, column);
         }
     }

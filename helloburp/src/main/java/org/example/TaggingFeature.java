@@ -24,7 +24,7 @@ public class TaggingFeature extends JPanel {
         // TODO: need to update tag names still
         String[] tags = {
                 "Tag 1", "Tag 2", "Tag 3", "Tag 4", "Tag 5",
-                "Tag 6", "Tag 7", "Tag 8", "Tag 9", "Tag 10"
+                "Tag 6", "Tag 7", "Tag 8", "Tag 9", "[Custom Tag]"
         };
 
         // TODO: temp colors for now, might update based on user feedback
@@ -32,7 +32,7 @@ public class TaggingFeature extends JPanel {
                 new Color(0xFFCDD2), new Color(0xC8E6C9), new Color(0xBBDEFB),
                 new Color(0xFFF9C4), new Color(0xD1C4E9), new Color(0xB2EBF2),
                 new Color(0xFFE0B2), new Color(0xDCEDC8), new Color(0xF8BBD0),
-                new Color(0xC5CAE9)
+                new Color(0xFF0000)
         };
 
         for (int i = 0; i < tags.length; i++) {
@@ -41,9 +41,18 @@ public class TaggingFeature extends JPanel {
             tagButton.setBackground(colors[i]);
             tagButton.setOpaque(true);
             tagButton.setBorderPainted(false);
-            tagButton.addActionListener(e -> {
-                logTableController.tagSelectedRequest(tag);
-            });
+            if (i >= 9) {
+                tagButton.addActionListener(e -> {
+                    String input = JOptionPane.showInputDialog(this, "Enter a custom tag:", tag);
+                    if (input != null && !input.trim().isEmpty()) {
+                        logTableController.tagSelectedRequest(input.trim());
+                    }
+                });
+            } else {
+                tagButton.addActionListener(e -> {
+                    logTableController.tagSelectedRequest(tag);
+                });
+            }
             tagPanel.add(tagButton);
         }
 
