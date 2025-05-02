@@ -30,6 +30,12 @@ public class LogTable extends JTable {
                 }
             }
         });
+        for (int i = 0; i < getColumnCount(); i++) {
+            if ("Tags".equalsIgnoreCase(getColumnName(i))) {
+                getColumnModel().getColumn(i).setCellRenderer(new MultiTagCellRenderer());
+                break;
+            }
+        }
     }
 
     public void setFilter(String filter) {
