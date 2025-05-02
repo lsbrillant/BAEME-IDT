@@ -15,7 +15,7 @@ public class LogTableModel extends AbstractTableModel {
 
     public LogTableModel(LogTableController controller) {
         this.entries = new ArrayList<>(); // Collections.synchronizedList?
-        this.columnNames = new String[]{"Number", "Host", "Method", "Tag", "URL", "Params", "Edited", "Code", "Length", "MIME", "Extension", "Title", "TLS", "IP", "Cookies", "Time", "Tags"}; // TODO: add all of them here
+        this.columnNames = new String[]{"Number", "Host", "Method", "Tag", "URL", "Params", "Edited", "Code", "Length", "MIME", "Extension", "Title", "TLS", "IP", "Cookies", "Time", "Status","Tags"}; // TODO: add all of them here
         this.controller = controller;
 //        this.entries.add(Arrays.asList(1, "http://dhruviscool.com", "GET"));
 //        this.entries.add(Arrays.asList(2, "http://sheaminiscool.com", "POST"));
@@ -36,6 +36,7 @@ public class LogTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int row, int column) {
+        LogEntry entry = entries.get(row);
         if (column == 0) { // request number column
             return row + 1;
         }
@@ -44,9 +45,23 @@ public class LogTableModel extends AbstractTableModel {
         if ("Tags".equalsIgnoreCase(columnName)) {
             return this.entries.get(row).getTags();
         }
+        List<Object> data = entry.getData();
+        return data.get(column);
+//
+//        if (column == getColumnCount() - 1) {
+//            return entry.getTags();
+//           // return this.entries.get(row).getFirstTag();
+//        }
+//        return data.get(column - 1);
+//
 
-        return this.entries.get(row).getData().get(column - 1);
-//        return String.format("%d %d", row, column);
+//        return this.entries.get(row).getData().get(column - 1);
+////        return String.format("%d %d", row, column);
+//        if (column == 0) {
+//            return row + 1;
+//        } else {
+//            return data.get(column - 1);
+//        }
     }
 
     public List<LogEntry> getData() {

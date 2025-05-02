@@ -8,8 +8,10 @@ import java.util.List;
 
 public class LogHTTPHandler implements HttpHandler {
     private LogTableController logTableController;
-    LogHTTPHandler(LogTableController controller) {
+    private LogProcessor logProcessor;
+    LogHTTPHandler(LogTableController controller, LogProcessor logProcessor) {
         this.logTableController = controller;
+        this.logProcessor = logProcessor;
     }
 
     public RequestToBeSentAction handleHttpRequestToBeSent(HttpRequestToBeSent requestToBeSent) {
@@ -17,7 +19,7 @@ public class LogHTTPHandler implements HttpHandler {
         LogEntry entry = new LogEntry(requestToBeSent, arrivalTime);
         entry.setMessageId(requestToBeSent.messageId());
         this.logTableController.getLogTableModel().addEntry(entry);
-
+        logProcessor.processIfComplete(entry, requestToBeSent,null);
         return RequestToBeSentAction.continueWith(requestToBeSent);
     }
 
@@ -26,8 +28,10 @@ public class LogHTTPHandler implements HttpHandler {
         // but I don't wanna break this cuz it's working rn lol
         List<LogEntry> entries = logTableController.getLogTableModel().getData();
         for (LogEntry entry : entries) {
-            if (entry.getMessageId() == responseReceived.messageId()) {
+            if ((long) entry.getMessageId() == responseReceived.messageId()) {
                 entry.setResponse(responseReceived);
+                logProcessor.processIfComplete(entry, entry.getRequest(), responseReceived);
+                break;
             }
         }
         return ResponseReceivedAction.continueWith(responseReceived);

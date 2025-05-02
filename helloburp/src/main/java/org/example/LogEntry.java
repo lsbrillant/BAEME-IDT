@@ -24,16 +24,16 @@ import burp.api.montoya.project.Project;
 import burp.api.montoya.proxy.Proxy;
 import burp.api.montoya.repeater.Repeater;
 import burp.api.montoya.scanner.Scanner;
-import burp.api.montoya.scanner.bchecks.BCheckImportResult;
 import burp.api.montoya.scope.Scope;
 import burp.api.montoya.sitemap.SiteMap;
 import burp.api.montoya.ui.UserInterface;
 import burp.api.montoya.utilities.Utilities;
 import burp.api.montoya.websocket.WebSockets;
+
+
 import lombok.Getter;
 import lombok.Setter;
 
-import java.net.MalformedURLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.net.URI;
@@ -41,26 +41,31 @@ import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.stream.Collectors;
+import java.util.UUID;
+
 
 import java.util.*;
 
 public class LogEntry {
     private List<String> tags; // TODO: change type from String to our own class called Tag or something
     @Getter
+    @Setter
     private HttpRequest request;
     @Getter
-    @Setter
+    //@Setter
     private HttpResponse response;
     private Date requestDateTime = new Date(0);
     private Date responseDateTime = new Date(0);
     @Setter
     @Getter
-    private int messageId;
+    public int messageId;
     private String requestHttpVersion;
 
     // Java Status class
-    Status previousStatus;
-    Status status = Status.UNPROCESSED;
+    public Status previousStatus;
+    public Status status;
+
+    //public debugStatement debug;
 
     private static final Pattern HTML_TITLE_PATTERN = Pattern.compile("<title>(.*?)</title>", Pattern.CASE_INSENSITIVE);
 
@@ -74,15 +79,15 @@ public class LogEntry {
     private String urlString; // url
     private URI uri;
     private String httpMethod; // method
-    private Short responseStatus;
-    private String responseStatusText;
+    private Short responseStatus = -1; // status codes
+    private String responseStatusText; // status code text
     private String redirectURL;
     private String comment; // use for the annotations for the tags(?)
     private int requestResponseDelay;  // is this useful for slow responses(?)
     private List<HttpHeader> requestHeaders;
     private List<HttpHeader> responseHeaders;
     private List<String> parameters;
-    private List<String> reflectedParameters;
+    private Set<String> reflectedParameters;
 
     private String formattedResponseTime;
 
@@ -92,7 +97,6 @@ public class LogEntry {
 
     private boolean params;
     private boolean edited; // is it boolean(?)
-    private String statusCode; // code
     private int length;
     private MimeType responseMimeType;
 
@@ -103,7 +107,6 @@ public class LogEntry {
     private String title;
     private String tls;
     private String ip;
-    private String cookies;
     private String time;
 
     // may need
@@ -113,7 +116,6 @@ public class LogEntry {
     private String protocol;
     private boolean isSSL;
     private String origin;
-    // private String cookies; // already defined
     private boolean hasCookieParam;
     private String requestContentType;
 
@@ -130,7 +132,9 @@ public class LogEntry {
 
     private boolean complete = false;
 
-    private final MontoyaApi montoya;
+    private UUID requestId;
+
+    private MontoyaApi montoya;
 
     public enum CookieJarStatus {
         YES("Yes"), NO("No"), PARTIALLY("Partially");
@@ -142,114 +146,17 @@ public class LogEntry {
         }
     }
 
+    private Date responseArrivalTime;
+
+
     // TODO: define process, processRequest, processResponse methods
     // These methods should extract and assign relevant fields
 
     private LogEntry() {
         this.tags = new ArrayList<>(); // TODO: change to HashSet for better lookup times?
-        montoya = new MontoyaApi() {
-            @Override
-            public Ai ai() {
-                return null;
-            }
-
-            @Override
-            public BurpSuite burpSuite() {
-                return null;
-            }
-
-            @Override
-            public Collaborator collaborator() {
-                return null;
-            }
-
-            @Override
-            public Comparer comparer() {
-                return null;
-            }
-
-            @Override
-            public Decoder decoder() {
-                return null;
-            }
-
-            @Override
-            public Extension extension() {
-                return null;
-            }
-
-            @Override
-            public Http http() {
-                return null;
-            }
-
-            @Override
-            public Intruder intruder() {
-                return null;
-            }
-
-            @Override
-            public Logging logging() {
-                return null;
-            }
-
-            @Override
-            public Organizer organizer() {
-                return null;
-            }
-
-            @Override
-            public Persistence persistence() {
-                return null;
-            }
-
-            @Override
-            public Project project() {
-                return null;
-            }
-
-            @Override
-            public Proxy proxy() {
-                return null;
-            }
-
-            @Override
-            public Repeater repeater() {
-                return null;
-            }
-
-            @Override
-            public Scanner scanner() {
-                return null;
-            }
-
-            @Override
-            public Scope scope() {
-                return null;
-            }
-
-            @Override
-            public SiteMap siteMap() {
-                return null;
-            }
-
-            @Override
-            public UserInterface userInterface() {
-                return null;
-            }
-
-            @Override
-            public Utilities utilities() {
-                return null;
-            }
-
-            @Override
-            public WebSockets websockets() {
-                return null;
-            }
-        };
+        this.status = Status.UNPROCESSED;
+        this.montoya = null;
     }
-
 
     public LogEntry(HttpRequest request) {
         this();
@@ -261,36 +168,79 @@ public class LogEntry {
         this.requestDateTime = requestDateTime;
     }
 
-
     public LogEntry(HttpRequest request, HttpResponse response) {
         this(request);
         this.response = response;
     }
 
-    // TODO: REPLACE.
-    // temporary method to make the week 2 feature work, need to make LogEntry more like Logger++ probably
-    public List<Object> getData() {
-        return Arrays.asList(
-                this.number,
-                this.hostname,
-                this.httpMethod,
-                this.tag, // Request tag
-                this.request.url(),
-                this.request.parameters(), // params
-                // add request Mimetype(?)
-                this.edited,
-                this.statusCode, // response status code
-                this.length, // response length
-                this.responseMimeType, //  response mime type
-                this.extension, // response extension
-                this.title,
-                this.tls,
-                this.ip,
-                this.cookies,
-                this.requestDateTime,
-                // add response datetime
-                this.tags // Other tags
-        );
+    // getter methods
+
+    public UUID getRequestId() {
+        return this.requestId;
+    }
+
+    public void setResponse(HttpResponse response) {
+        this.response = response;
+    }
+
+    public int getNumber() {
+        return number;
+    }
+
+    public String getHostname() {
+        return hostname;
+    }
+
+    public String getHttpMethod() {
+        return httpMethod;
+    }
+
+    public String getTag() {
+        return this.tag;
+    }
+
+    public boolean isEdited() {
+        return edited;
+    }
+
+    public Date getResponseArrivalTime() {
+        return responseArrivalTime;
+    }
+
+    public void setResponseArrivalTime(Date responseArrivalTime) {
+        this.responseArrivalTime = responseArrivalTime;
+    }
+
+    public Short getResponseStatus() {
+        return responseStatus;
+    }
+
+    public String getResponseStatusText() {
+        return responseStatusText;
+    }
+
+    public int getLength() {
+        return length;
+    }
+
+    public MimeType getResponseMimeType() {
+        return responseMimeType;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getTls() {
+        return tls;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public String getFormattedResponseTime() {
+        return formattedResponseTime;
     }
 
     // TODO: Processing data logic for requests
@@ -298,24 +248,31 @@ public class LogEntry {
     public boolean process() {
         previousStatus = this.status;
         switch (this.status) {
-            case UNPROCESSED: {
+            case UNPROCESSED -> {
                 this.status = processRequest();
             }
-            case AWAITING_RESPONSE: {
+            case AWAITING_RESPONSE -> {
                 if (this.response == null) {
-                    this.status = Status.AWAITING_RESPONSE;
+                    this.status = Status.FAILED;
                     return false;
                 }
-                processResponse();
-                this.status = Status.PROCESSED;
+                this.status = processResponse();
+                //return this.status == Status.PROCESSED;
+                // return true;
+            }
+            case PROCESSED -> {
                 return true;
             }
-            case PROCESSED: {
-                return true;
-            }
-            default:
+            case FAILED -> {
                 return false;
+                //reprocess();
+                // return this.status == Status.PROCESSED;
+            }
+            default -> {
+                return false;
+            }
         }
+        return this.status == Status.PROCESSED;
     }
 
     public void reprocess() {
@@ -327,14 +284,43 @@ public class LogEntry {
         return status;
     }
 
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+
+//    public debugStatement getDebug() {
+//        return debug;
+//    }
+//
+//    public void setDebugStatement(debugStatement debug) {
+//        this.debug = debug;
+//    }
+
+//    public void setResponse(HttpResponse response) {
+//        this.response = response;
+//    }
+
     public Status getPreviousStatus() {
         return previousStatus;
     }
 
+    public void setMontoya(MontoyaApi montoya) {
+        this.montoya = montoya;
+    }
+
     // change to make relevant to tidyburp
     private Status processRequest() {
-        // retrieve basic request metadata
+        if (this.request == null) {
+            return Status.FAILED;
+        }
         requestHeaders = request.headers();
+        // retrieve basic request metadata
+        if (this.requestHeaders != null && !this.requestHeaders.isEmpty()) {
+            requestHeaders = request.headers();
+        } else {
+            System.out.print("Request headers is null or empty");
+        }
         this.urlString = request.url();
         this.hostname = this.request.httpService().host();
         this.protocol = this.request.httpService().secure() ? "https" : "http";
@@ -383,192 +369,311 @@ public class LogEntry {
             this.params = uri.getQuery() != null || this.hasBodyParam;
             // analyze HTTP headers
         }
-        for (HttpHeader header : requestHeaders) {
-            // handle cookies
-            if (header.name().equalsIgnoreCase("cookie")) {
-                this.sentCookies = header.value();
-                if (!this.sentCookies.isEmpty()) {
-                    this.hasCookieParam = true;
-                    this.sentCookies += ";";
-
-                    // Check to see if it uses cookie Jars!
-                    List<Cookie> cookiesInJar = montoya.http().cookieJar().cookies();
-                    boolean oneNotMatched = false;
-                    boolean anyParamMatched = false;
-
-                    for (Cookie cookieItem : cookiesInJar) {
-                        if (cookieItem.domain().equals(this.hostname)) {
-                            String currentCookieJarParam = cookieItem.name() + "=" + cookieItem.value() + ";";
-                            if (this.sentCookies.contains(currentCookieJarParam)) {
-                                anyParamMatched = true;
-                            } else {
-                                oneNotMatched = true;
-                            }
-                            if (anyParamMatched && oneNotMatched) {
-                                break; // we do not need to analyse it more!
-                            }
-                        }
-                        // set cookie jar usage status
-                        if (oneNotMatched && anyParamMatched) {
-                            this.usesCookieJar = CookieJarStatus.PARTIALLY;
-                        } else if (!oneNotMatched && anyParamMatched) {
-                            this.usesCookieJar = CookieJarStatus.YES;
-                        }
-                    }
-                    //handle different headers
-                } else if (header.name().equalsIgnoreCase("referer")) {
-                    this.referrerURL = header.value();
-                } else if (header.name().equalsIgnoreCase("content-type")) {
-                    this.requestContentType = header.value();
-                } else if (header.name().equalsIgnoreCase("origin")) {
-                    this.origin = header.value();
-                }
-            }
-        }
-
+//        for (HttpHeader header : requestHeaders) {
+//            // handle cookies
+//            if (header.name().equalsIgnoreCase("cookie")) {
+//                this.sentCookies = header.value();
+//                if (!this.sentCookies.isEmpty()) {
+//                    this.hasCookieParam = true;
+//                    this.sentCookies += ";";
+//
+//
+//                    // split cookies
+//                    String[] cookiesArray = this.sentCookies.split(";");
+//
+//                    // old logic
+//                    // Check to see if it uses cookie Jars!
+////                    List<Cookie> cookiesInJar = montoya.http().cookieJar().cookies();
+////                    boolean oneNotMatched = false;
+////                    boolean anyParamMatched = false;
+////
+////                    for (Cookie cookieItem : cookiesInJar) {
+////                        if (cookieItem.domain().equals(this.hostname)) {
+////                            String currentCookieJarParam = cookieItem.name() + "=" + cookieItem.value() + ";";
+////                            if (this.sentCookies.contains(currentCookieJarParam)) {
+////                                anyParamMatched = true;
+////                            } else {
+////                                oneNotMatched = true;
+////                            }
+////                            if (anyParamMatched && oneNotMatched) {
+////                                break; // we do not need to analyse it more!
+////                            }
+////                        }
+////                        // set cookie jar usage status
+////                        if (oneNotMatched && anyParamMatched) {
+////                            this.usesCookieJar = CookieJarStatus.PARTIALLY;
+////                        } else if (!oneNotMatched && anyParamMatched) {
+////                            this.usesCookieJar = CookieJarStatus.YES;
+////                        }
+//                    // old logic
+//                    List<Cookie> cookiesInJar = montoya.http().cookieJar().cookies();
+//                    boolean oneNotMatched = false;
+//                    boolean anyParamMatched = false;
+//
+//                    for (String cookie: cookiesArray) {
+//                        cookie = cookie.trim();
+//                        if (cookie.isEmpty()) continue;
+//
+//                        String[] cookieParts = cookie.split("=");
+//                        if (cookieParts.length == 2) {
+//                            String cookieName = cookieParts[0].trim();
+//                            String cookieValue = cookieParts[1].trim();
+//                            String currentCookieJarParam = cookieName + "=" + cookieValue + ";";
+//
+//                            // Check if this cookie exists in the cookie jar
+//                            for (Cookie cookieItem : cookiesInJar) {
+//                                if (cookieItem.domain().equals(this.hostname) && currentCookieJarParam.equals(cookieItem.name() + "=" + cookieItem.value())) {
+//                                    anyParamMatched = true;
+//                                    break;  // Break if matched
+//                                } else {
+//                                    oneNotMatched = true;  // Mark as unmatched if not found
+//                                }
+//                            }
+//                        }
+//                    }
+//
+//                    // Set cookie jar usage status based on matching cookies
+//                    if (oneNotMatched && anyParamMatched) {
+//                        this.usesCookieJar = CookieJarStatus.PARTIALLY;
+//                    } else if (!oneNotMatched && anyParamMatched) {
+//                        this.usesCookieJar = CookieJarStatus.YES;
+//                    }
+//                }
+//            }
+            //handle different headers
+//            if (header.name().equalsIgnoreCase("referer")) {
+//                this.referrerURL = header.value();
+//            }
+//            if (header.name().equalsIgnoreCase("content-type")) {
+//                this.requestContentType = header.value();
+//            }
+//            if (header.name().equalsIgnoreCase("origin")) {
+//                this.origin = header.value();
+//            }
+//        }
+        this.complete = true;
         return Status.AWAITING_RESPONSE;
     }
 
-    // ill make this work eventually
-//    // change to make relevant to tidyburp
-    private Status processResponse() {
-        // resets the reflected parameters
-        reflectedParameters = new ArrayList<>();
-        // basic response info
-        this.responseStatus = response.statusCode();
-        this.responseBodyLength = response.body().length();
-        this.responseMimeType = response.statedMimeType();
-        //this.responseInferredMimeType = response.inferredMimeType();
-
-        // 1. process headers
-        Map<String, String> headers = response.headers().stream()
-                .collect(Collectors.toMap(HttpHeader::name, HttpHeader::value, (s, s2) -> {
-                    s += ", " + s2;
-                    return s;
-                }, () -> new TreeMap<>(String.CASE_INSENSITIVE_ORDER)));
-
-        responseHeaders = response.headers();
-
-        // finds headers that could affect processing
-        if (headers.containsKey("Location")) {
-            this.redirectURL = headers.get("Location");
-        }
-
-        // extract response content type
-        if (headers.containsKey("content-type")) {
-            this.responseContentType = headers.get("content-type");
-        }
-
-        // process cookies from response headers
-        this.newCookies = response.cookies().stream().map(cookie -> String.format("%s=%s", cookie.name(), cookie.value())).collect(Collectors.toList());
-        this.hasSetCookies = !newCookies.isEmpty();
-
-        // parse date header
-        if (this.responseDateTime == null && headers.containsKey("Date")) {
-            try {
-                SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ENGLISH);
-                this.responseDateTime = sdf.parse(headers.get("Date"));
-            } catch (ParseException e) {
-                this.responseDateTime = null;
-            }
-        }
-
-        if (responseDateTime != null) {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            this.formattedResponseTime = sdf.format(responseDateTime);
-        } else {
-            this.formattedResponseTime = "";
-        }
-
-        // calculate response delay
-        if (requestDateTime != null && responseDateTime != null) {
-            this.requestResponseDelay = (int) (responseDateTime.getTime() - requestDateTime.getTime());
-        }
-
-        // 2. process body
-
-        String responseBody = response.bodyToString();
-
-        reflectedParameters = request.parameters().stream()
-                .filter((param -> isReflected(responseBody, param.value())))
-                .map(HttpParameter::name)
-                .collect(Collectors.toList());
-
-        if (this.responseMimeType != null && this.responseMimeType.toString().toLowerCase().contains("html")) {
-            this.title = extractHtmlTitle(responseBody);
-        }
-
-        for (HttpParameter param: request.parameters()) {
-            String value = param.value();
-            for (HttpHeader header: response.headers()) {
-                if (header.value().contains(value)) {
-                    reflectedParameters.add(param.name());
-                    break;
-                }
-            }
-        }
-
-        this.complete = true;
-        return Status.PROCESSED;
-    }
-
-    public void setTag(String tag) {
-        tags.clear();
-        tags.add(tag);
-    }
-
-
-    public void addTag(String tag) {
-        if (!tags.contains(tag)) {
-            tags.add(tag);
-        }
-    }
-
-
-    public String getFirstTag() {
-        return tags.isEmpty() ? "" : tags.get(0);
-    }
-
-
-    public List<String> getTags() {
-        return tags;
-    }
-
-
-    public void removeTag(String tag) {
-        tags.remove(tag);
-    }
-
-
-    public void clearTags() {
-        tags.clear();
-    }
-
-    public byte[] getRequestBytes() {
-        return this.request.toByteArray().getBytes();
-    }
-
-    private boolean isValidUri(String uri) {
-        try {
-            URI tempUri = new URI(uri);
-            return tempUri.getHost() != null;
-        } catch (URISyntaxException e){
+    public boolean processRequestOnly() {
+        try{
+            processRequest();
+            return true;
+        } catch (Exception e) {
             return false;
         }
     }
+        private Status processResponse () {
+            if (response == null) {
+                return Status.FAILED;
+            }
+            // resets the reflected parameters
+            reflectedParameters = new HashSet<>();
+            // basic response info
+            this.responseStatus = response.statusCode();
+            //this.responseStatusText = getStatusText(this.responseStatus);
+            this.responseBodyLength = this.response.body().length();
+            this.responseMimeType = response.statedMimeType();
+            this.responseInferredMimeType = response.inferredMimeType();
 
-    private boolean isReflected (String responseBody, String paramValue) {
-        return responseBody != null && responseBody.contains(paramValue);
-    }
+            // 1. process headers
+            Map<String, String> headers = response.headers().stream()
+                    .collect(Collectors.toMap(HttpHeader::name, HttpHeader::value, (s, s2) -> {
+                        s += ", " + s2;
+                        return s;
+                    }, () -> new TreeMap<>(String.CASE_INSENSITIVE_ORDER)));
 
-    private String extractHtmlTitle(String responseBody) {
-        if (responseBody == null) {
+            responseHeaders = response.headers();
+
+            // finds headers that could affect processing
+            if (headers.containsKey("Location")) {
+                this.redirectURL = headers.get("Location");
+            }
+
+            // extract response content type
+            if (headers.containsKey("content-type")) {
+                this.responseContentType = headers.get("content-type");
+            }
+
+            // process cookies from response headers
+            this.newCookies = response.cookies().stream().map(cookie -> String.format("%s=%s", cookie.name(), cookie.value())).collect(Collectors.toList());
+            this.hasSetCookies = !newCookies.isEmpty();
+
+            // parse date header
+            if (this.responseDateTime == null && headers.containsKey("Date")) {
+                try {
+                    SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ENGLISH);
+                    this.responseDateTime = sdf.parse(headers.get("Date"));
+                } catch (ParseException e) {
+                    this.responseDateTime = null;
+                }
+            }
+
+            if (responseDateTime != null) {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                this.formattedResponseTime = sdf.format(responseDateTime);
+            } else {
+                this.formattedResponseTime = "";
+            }
+
+            // calculate response delay
+            if (requestDateTime != null && responseDateTime != null) {
+                this.requestResponseDelay = (int) (responseDateTime.getTime() - requestDateTime.getTime());
+            }
+
+            // 2. process body
+            String responseBody = response.bodyToString();
+            if (responseBody == null) {
+                return Status.FAILED_PROCESS;
+            }
+            reflectedParameters = request.parameters().stream()
+                    .filter((param -> isReflected(responseBody, param.value())))
+                    .map(HttpParameter::name)
+                    .collect(Collectors.toSet());
+
+            if (this.responseMimeType != null && this.responseMimeType.toString().toLowerCase().contains("html")) {
+                this.title = extractHtmlTitle(responseBody);
+            }
+
+            for (HttpParameter param : request.parameters()) {
+                String value = param.value();
+                for (HttpHeader header : response.headers()) {
+                    if (header.value().contains(value)) {
+                        reflectedParameters.add(param.name());
+                        break;
+                    }
+                }
+            }
+                this.complete = true;
+                return Status.PROCESSED;
+            }
+
+
+        public void setTag (String tag){
+            tags.clear();
+            tags.add(tag);
+        }
+
+
+        public void addTag (String tag){
+            if (!tags.contains(tag)) {
+                tags.add(tag);
+            }
+        }
+
+
+        public String getFirstTag () {
+            return tags.isEmpty() ? "" : tags.get(0);
+        }
+
+
+        public List<String> getTags () {
+            return tags;
+        }
+
+
+        public void removeTag (String tag){
+            tags.remove(tag);
+        }
+
+
+        public void clearTags () {
+            tags.clear();
+        }
+
+        public byte[] getRequestBytes () {
+            return this.request.toByteArray().getBytes();
+        }
+
+        private boolean isValidUri (String uri){
+            try {
+                URI tempUri = new URI(uri);
+                return tempUri.getHost() != null;
+            } catch (URISyntaxException e) {
+                return false;
+            }
+        }
+
+        private boolean isReflected (String responseBody, String paramValue){
+            return responseBody != null && responseBody.contains(paramValue);
+        }
+
+        private String extractHtmlTitle (String responseBody){
+            if (responseBody == null) {
+                return null;
+            }
+            Matcher titlePatternMatcher = HTML_TITLE_PATTERN.matcher(responseBody);
+            if (titlePatternMatcher.find()) {
+                return this.title = titlePatternMatcher.group(1);
+            }
             return null;
         }
-        Matcher titlePatternMatcher = HTML_TITLE_PATTERN.matcher(responseBody);
-        if (titlePatternMatcher.find()) {
-            return this.title = titlePatternMatcher.group(1);
+
+        // TODO: REPLACE.
+        // temporary method to make the week 2 feature work, need to make LogEntry more like Logger++ probably
+//    public List<Object> getData() {
+//        return Arrays.asList(
+//                this.number, // int
+//                this.hostname != null ? this.hostname : "N/A", // String w/o port number
+//                this.httpMethod != null? this.httpMethod: "UNKNOWN", // String
+//                this.tag != null ? this.tag : "NO_TAG",// Request tag // String
+//                this.request.url(), //
+//                this.request.parameters(), // params - url is showing up here
+//                // add request Mimetype(?)
+//                this.edited, // parsed http [] is showing up here
+//                this.statusCode, // response status code - showing up as either params or edited
+//                this.length, // response length
+//                this.responseMimeType, //  response mime type
+//                this.extension, // response extension
+//                this.title,
+//                this.tls,
+//                this.ip,
+//                this.cookies,
+//                this.requestDateTime, // showing up as status
+//                this.status, // showing up as tags
+//                // add response datetime
+//                this.tags // Other tags
+//        );
+//    }
+
+        public List<Object> getData () {
+            return Arrays.asList(
+                    this.number, // int
+                    this.hostname != null ? this.hostname : "N/A", // String w/o port number
+                    this.httpMethod != null ? this.httpMethod : "UNKNOWN", // String
+                    this.tag != null ? this.tag : "NO_TAG", // Request tag // String
+                    //this.request != null ? this.request.url() : "N/A", // URL from request
+                    this.urlString != null ? this.urlString : "N/A",
+                    this.parameters != null ? this.request.parameters() : new ArrayList<>(), // Parameters
+                    // need to get the processed ones instead
+                    //this.request.parameters(),
+                    // everything past here is null
+                    this.edited, // Boolean: edited status
+                    this.responseStatus != -1 ? this.responseStatus : "UNKNOWN", // Response status code
+                    //this.responseStatus = response.statusCode() != -1 ? response.statusCode() : 0
+                    //this.response.statusCode(),
+                    //this.responseStatus,
+                    this.responseBodyLength, // Response length
+                    this.responseMimeType != null ? this.responseMimeType : "UNKNOWN", // Response mime type
+                    this.extension != null ? this.extension : "N/A", // File extension
+                    this.title != null ? this.title : "Untitled", // Page title
+                    this.tls != null ? this.tls : "N/A", // TLS info
+                    this.ip != null ? this.ip : "N/A", // IP address
+                    this.sentCookies != null ? this.sentCookies : "N/A", // Cookies
+                    // these work okay
+                    this.requestDateTime != null ? this.requestDateTime.toString() : "N/A", // Request datetime
+                    this.status != null ? this.status.toString() : "N/A", // Status
+                    //this.debug != null ? this.debug : "N/A",
+                    //this.responseDateTime != null ? this.responseDateTime.toString() : "N/A", // Response datetime
+                    this.tags != null ? this.tags : new ArrayList<>() // Tags
+            );
         }
-        return null;
-    }
+
+        public enum Status {
+            UNPROCESSED, AWAITING_RESPONSE, PROCESSED, FAILED, FAILED_PROCESS, NO_PROCESS,
+        }
+
+//    public enum debugStatement {
+//        WORKING_REQUEST, NOT_WORKING_REQUEST, WORKING_RESPONSE, NOT_WORKING_RESPONSE,
+//    }
 }
