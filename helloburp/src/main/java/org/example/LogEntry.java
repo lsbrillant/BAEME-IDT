@@ -85,6 +85,7 @@ public class LogEntry {
     private String comment; // use for the annotations for the tags(?)
     private int requestResponseDelay;  // is this useful for slow responses(?)
     private List<HttpHeader> requestHeaders;
+    @Getter
     private List<HttpHeader> responseHeaders;
     private List<String> parameters;
     private Set<String> reflectedParameters;
