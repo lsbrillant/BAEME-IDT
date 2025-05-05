@@ -26,7 +26,7 @@ public class LogTable extends JTable {
                 requestViewerController.setDisplayedEntity(null);
             }else {
                 // Use a relative instead of an absolute index (This prevents an issue when a filter is set)
-                LogEntry logEntry = controller.getLogTableModel().getRow(selectedRow);
+                LogEntry logEntry = controller.getLogTableModel().getData().get(convertRowIndexToModel(selectedRow));
                 if (logEntry != null) {
                     requestViewerController.setDisplayedEntity(logEntry);
                 }
