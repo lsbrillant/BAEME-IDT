@@ -4,6 +4,7 @@ import org.example.LogEntry;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import lombok.Getter;
 
@@ -14,7 +15,7 @@ public class LogTableModel extends AbstractTableModel {
     private final List<LogEntry> entries;
 
     public LogTableModel(LogTableController controller) {
-        this.entries = new ArrayList<>(); // Collections.synchronizedList?
+        this.entries = Collections.synchronizedList(new ArrayList<>());
         this.columnNames = new String[]{"Number", "Host", "Method", "URL", "Params", "Edited", "Code", "Length", "MIME", "Extension", "Title", "TLS", "IP", "Cookies", "Time", "Status","Tags"};
         this.controller = controller;
 //        this.entries.add(Arrays.asList(1, "http://dhruviscool.com", "GET"));

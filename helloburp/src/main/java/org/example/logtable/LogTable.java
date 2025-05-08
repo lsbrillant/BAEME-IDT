@@ -8,8 +8,11 @@ import javax.swing.*;
 import javax.swing.table.TableRowSorter;
 import java.util.List;
 
+import lombok.Getter;
+
 public class LogTable extends JTable {
     private LogTableController controller;
+    @Getter
     private TableRowSorter<LogTableModel> sorter;
 
     LogTable(LogTableController controller) {
