@@ -7,6 +7,7 @@ import org.example.logtable.LogTable;
 import org.example.logtable.LogTableController;
 import org.example.requestviewer.RequestViewerController;
 import org.example.requestviewer.RequestViewerPanel;
+import org.example.tabfeature.TabController;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,14 +29,29 @@ public class AnnotationsTab {
         RequestViewerController requestViewerController = new RequestViewerController(montoya);
         logTableController.setRequestViewerController(requestViewerController); // hack to avoid creating LogViewController
 
+        TabController tabController = new TabController(logTableController);
+
         VariableViewPanel bottomPanel = new VariableViewPanel(null, "msgviewlayout",
                 requestViewerController.getRequestViewerPanel(), "Request/Response",
                 new TaggingFeature(logTableController), "Tags",
                 VariableViewPanel.View.HORIZONTAL);
 
-        tableViewerSplitPanel = new VariableViewPanel(null, "msgviewlayout", scrollPane, "Log Table",
-                bottomPanel, "Bottom", VariableViewPanel.View.VERTICAL);
-        this.panel.add(new FilterFeature(logTableController), BorderLayout.NORTH);
+        VariableViewPanel centerPanel = new VariableViewPanel(null, "msgviewlayout",
+                tabController.getView().getSidePanel(), "Tab Side Panel", scrollPane, "Log Table",
+                VariableViewPanel.View.HORIZONTAL);
+        ((JSplitPane) centerPanel.getComponent(0)).setResizeWeight((double) 0.1F); // hack to make table take up most of the space
+
+        tableViewerSplitPanel = new VariableViewPanel(null, "msgviewlayout", centerPanel,
+                "Center Panel", bottomPanel, "Bottom Panel", VariableViewPanel.View.VERTICAL);
+
+        VariableViewPanel aboveTablePanel = new VariableViewPanel(null, "msgviewlayout",
+                new FilterFeature(logTableController), "Filter Feature", tabController.getView().getTopPanel(),
+                "Active Tabs Panel", VariableViewPanel.View.VERTICAL);
+
+        this.panel.add(aboveTablePanel, BorderLayout.NORTH);
+//        this.panel.add(new FilterFeature(logTableController), BorderLayout.NORTH);
+//        this.panel.add(tabController.getView().getTopPanel(), BorderLayout.NORTH);
+//        this.panel.add(tabController.getView().getSidePanel(), BorderLayout.WEST);
         this.panel.add(tableViewerSplitPanel, BorderLayout.CENTER);
     }
 

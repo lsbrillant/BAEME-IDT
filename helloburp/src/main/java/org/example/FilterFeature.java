@@ -5,9 +5,6 @@ import org.example.logtable.LogTableController;
 import com.coreyd97.BurpExtenderUtilities.HistoryField;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -66,26 +63,53 @@ public class FilterFeature extends JPanel {
                 });
                 this.activeFilterPanel.add(codeField);
             } else if (s != null && s.equals("Header")) {
-                JTextField headerField = new JTextField(15); // TODO: maybe make this bigger
+                JTextField headerField = new JTextField(15);
+                JTextField headerFilterField = new JTextField(5);
+                headerFilterField.addKeyListener(new KeyAdapter() {
+                    @Override
+                    public void keyPressed(KeyEvent e) {
+                        if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+                            setFilter("header", headerField.getText(), headerFilterField.getText(),
+                                    false);
+                        }
+                    }
+                });
                 String[] filterOptionsArr = {"", "present", "not present", "matches"};
                 JComboBox<String> filterOptionsField = new JComboBox<>(filterOptionsArr);
+
+                headerField.addKeyListener(new KeyAdapter() {
+                    @Override
+                    public void keyPressed(KeyEvent e) {
+                        if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+                            if (headerField.getText().isEmpty()) {
+                                clearFilter("header");
+                                return;
+                            }
+                            String selectedFilterOption = filterOptionsField.getSelectedItem().toString(); // maybe unsafe?
+                            if (selectedFilterOption.contains("present")) {
+                                setFilter("header", headerField.getText(), null,
+                                        selectedFilterOption.equals("not present"));
+                            } else if (selectedFilterOption.equals("matches")) {
+                                setFilter("header", headerField.getText(), headerFilterField.getText(),
+                                        false);
+                            }
+                        }
+                    }
+                });
 
                 filterOptionsField.addActionListener(e1 -> {
                     JComboBox<String> filterOptionBox = (JComboBox<String>) e1.getSource();
                     String selectedFilterOption = (String) filterOptionBox.getSelectedItem();
-                    // this is a bit weird, but declaring this outside so we can remove it in the else block below
-                    JTextField headerFilterField = new JTextField(5);
-                    // TODO: above needs an action listener too
+
                     if (selectedFilterOption.equals("matches")) {
                         this.activeFilterPanel.add(headerFilterField);
                     } else {
                         if (this.activeFilterPanel.getComponent(this.activeFilterPanel.getComponentCount() - 1) instanceof JTextField) {
                             this.activeFilterPanel.remove(this.activeFilterPanel.getComponentCount() - 1);
                         }
-                        // TODO: do filtering stuff
                         // headerName, filterString, inverted
                         setFilter("header", headerField.getText(), null,
-                                selectedFilterOption.equals("present"));
+                                selectedFilterOption.equals("not present"));
                     }
                     this.activeFilterPanel.revalidate();
                     this.activeFilterPanel.repaint();
