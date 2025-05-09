@@ -10,6 +10,12 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import java.io.File;
+import java.io.IOException;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+
+
 public class FilterFeature extends JPanel {
     JLabel searchLabel;
     JLabel filterLabel;
@@ -127,6 +133,26 @@ public class FilterFeature extends JPanel {
         this.add(activeFilterPanel);
         this.add(searchLabel);
         this.add(searchField);
+
+        JButton exportButton = new JButton("Export Visible Requests");
+        exportButton.setToolTipText("Download all currently visible rows as a CSV file");
+        exportButton.addActionListener(e -> {
+            JFileChooser chooser = new JFileChooser();
+            if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+                File file = chooser.getSelectedFile();
+                if (!file.getName().toLowerCase().endsWith(".csv")) {
+                    file = new File(file.getAbsolutePath() + ".csv");
+                }
+
+                try {
+                    ExportFeature.exportVisibleRowsToCSV(logTableController.getLogTable(), file);
+                    JOptionPane.showMessageDialog(this, "Export successful!");
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(this, "Export failed: " + ex.getMessage());
+                }
+            }
+        });
+        this.add(exportButton);
     }
 
     public void clearFilter(String filterType) {
