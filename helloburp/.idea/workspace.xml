@@ -5,14 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="31af150e-a589-4f89-b48d-d756060e3a50" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/tabfeature/Tab.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/tabfeature/TabController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/tabfeature/TabModel.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/tabfeature/TabView.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/AnnotationsTab.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/AnnotationsTab.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/logtable/LogTable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/logtable/LogTable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/logtable/LogTableModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/logtable/LogTableModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/tabfeature/TabView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/tabfeature/TabView.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -195,7 +189,7 @@
       <workItem from="1746424470939" duration="16778000" />
       <workItem from="1746565107535" duration="17709000" />
       <workItem from="1746667497340" duration="3335000" />
-      <workItem from="1746733552154" duration="8566000" />
+      <workItem from="1746733552154" duration="9643000" />
     </task>
     <servers />
   </component>

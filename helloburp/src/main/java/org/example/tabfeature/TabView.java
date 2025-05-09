@@ -32,8 +32,11 @@ public class TabView {
         JButton newButton = new JButton("Create Tab");
         newButton.addActionListener(e -> {
             RowFilter<?, ?> f = controller.getLogTableController().getLogTable().getSorter().getRowFilter();
-            Tab newTab = new Tab((RowFilter<LogTableModel, Integer>) f, "New Tab");
-            controller.getModel().addTab(newTab, "side");
+            if (f != null) {
+                // TODO: make there be a popup so you can set the name if you want (look at JR's tab code for this)
+                Tab newTab = new Tab((RowFilter<LogTableModel, Integer>) f, "New Tab");
+                controller.getModel().addTab(newTab, "side");
+            }
         });
         this.topPanel.add(newButton, BorderLayout.WEST);
 
