@@ -52,9 +52,10 @@ public class FilterFeature extends JPanel {
         columnNames.addAll(Arrays.asList(logTableController.getLogTableModel().getColumnNames()));
         this.filterField = new JComboBox<>(columnNames.toArray());
         filterField.addActionListener(e -> {
-            JComboBox<String> cb = (JComboBox<String>) e.getSource();
-            String s = cb != null ? (String) cb.getSelectedItem() : null;
+            String s = (String) filterField.getSelectedItem();
             this.activeFilterPanel.removeAll(); // clear active filter panel
+            this.activeFilterPanel.repaint();
+            this.activeFilterPanel.revalidate();
             if (s != null && s.equals("Code")) {
                 this.activeFilterPanel.add(new JLabel("matches"));
                 JTextField codeField = new JTextField(5);
@@ -104,12 +105,11 @@ public class FilterFeature extends JPanel {
                 });
 
                 filterOptionsField.addActionListener(e1 -> {
-                    JComboBox<String> filterOptionBox = (JComboBox<String>) e1.getSource();
-                    String selectedFilterOption = (String) filterOptionBox.getSelectedItem();
+                    String selectedFilterOption = (String) filterOptionsField.getSelectedItem();
 
-                    if (selectedFilterOption.equals("matches")) {
+                    if (selectedFilterOption != null && selectedFilterOption.equals("matches")) {
                         this.activeFilterPanel.add(headerFilterField);
-                    } else {
+                    } else if (selectedFilterOption != null && !selectedFilterOption.isEmpty()) {
                         if (this.activeFilterPanel.getComponent(this.activeFilterPanel.getComponentCount() - 1) instanceof JTextField) {
                             this.activeFilterPanel.remove(this.activeFilterPanel.getComponentCount() - 1);
                         }
@@ -195,6 +195,7 @@ public class FilterFeature extends JPanel {
                 if (logTable.getSelectedRow() != -1) {
                     logTable.scrollRectToVisible(logTable.getCellRect(logTable.getSelectedRow(), 0, true));
                 }
+                break;
             }
             case "header": {
                 if (args[1] == null) { // if filterString is null (this means we're looking for existence of a header)
@@ -208,6 +209,7 @@ public class FilterFeature extends JPanel {
                 if (logTable.getSelectedRow() != -1) {
                     logTable.scrollRectToVisible(logTable.getCellRect(logTable.getSelectedRow(), 0, true));
                 }
+                break;
             }
             case "code": {
                 String codeFilterString = (String) args[0];
@@ -220,6 +222,7 @@ public class FilterFeature extends JPanel {
                 if (logTable.getSelectedRow() != -1) {
                     logTable.scrollRectToVisible(logTable.getCellRect(logTable.getSelectedRow(), 0, true));
                 }
+                break;
             }
             default: {
                 break;

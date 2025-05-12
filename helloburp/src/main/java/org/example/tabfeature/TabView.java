@@ -33,9 +33,17 @@ public class TabView {
         newButton.addActionListener(e -> {
             RowFilter<?, ?> f = controller.getLogTableController().getLogTable().getSorter().getRowFilter();
             if (f != null) {
-                // TODO: make there be a popup so you can set the name if you want (look at JR's tab code for this)
-                Tab newTab = new Tab((RowFilter<LogTableModel, Integer>) f, "New Tab");
-                controller.getModel().addTab(newTab, "side");
+                String input = JOptionPane.showInputDialog(this.topPanel, "Enter tab name:",
+                        this.controller.getLogTableController().getLogTable().getCurrentFilterName());
+                Tab newTab;
+                if (input != null && !input.trim().isEmpty()) {
+                    newTab = new Tab((RowFilter<LogTableModel, Integer>) f, input);
+                    controller.getModel().addTab(newTab, "side");
+                } else if (input != null) {
+                    newTab = new Tab((RowFilter<LogTableModel, Integer>) f,
+                            this.controller.getLogTableController().getLogTable().getCurrentFilterName());
+                    controller.getModel().addTab(newTab, "side");
+                }
             }
         });
         this.topPanel.add(newButton, BorderLayout.WEST);

@@ -11,15 +11,11 @@ public class Tab {
     @Setter
     private String name;
     @Getter
+    @Setter
     private RowFilter<LogTableModel, Integer> filter;
 
-    Tab(RowFilter<LogTableModel, Integer> filter) {
-        this.filter = filter;
-        // TODO: derive name from the filter somehow
-    }
-
     Tab(RowFilter<LogTableModel, Integer> filter, String name) {
-        this(filter);
+        this.filter = filter;
         this.name = name;
     }
 

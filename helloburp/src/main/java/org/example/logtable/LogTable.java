@@ -14,12 +14,15 @@ public class LogTable extends JTable {
     private LogTableController controller;
     @Getter
     private TableRowSorter<LogTableModel> sorter;
+    @Getter
+    private String currentFilterName;
 
     LogTable(LogTableController controller) {
         super(controller.getLogTableModel());
         this.controller = controller;
         this.sorter = new TableRowSorter<>(controller.getLogTableModel());
         this.setRowSorter(sorter);
+        this.currentFilterName = "";
 
         this.getSelectionModel().addListSelectionListener(e -> {
             if(e.getValueIsAdjusting()) return;
@@ -48,6 +51,7 @@ public class LogTable extends JTable {
         if (filter == null) {
             this.sorter.setRowFilter(null);
         } else {
+            this.currentFilterName = "Search: " + filter;
             this.sorter.setRowFilter(RowFilter.regexFilter(filter));
             ((JScrollPane) this.getParent().getParent()).getVerticalScrollBar().setValue(0); // maybe don't need this?
         }
@@ -58,6 +62,7 @@ public class LogTable extends JTable {
             this.sorter.setRowFilter(null);
             return;
         }
+
         RowFilter<LogTableModel, Integer> headerFilter = new RowFilter<LogTableModel, Integer>() {
             public boolean include(Entry<? extends LogTableModel, ? extends Integer> entry) {
                 LogEntry e = entry.getModel().getRow(entry.getIdentifier());
@@ -79,6 +84,13 @@ public class LogTable extends JTable {
                 }
             }
         };
+        // Set the automatic name for the tab
+        if (filterString == null) {
+            this.currentFilterName = "Header: " + headerName + (inverted ? " doesn't exist" : " exists");
+        } else {
+            this.currentFilterName = "Header: " + headerName + " matches " + filterString;
+        }
+
         this.sorter.setRowFilter(headerFilter);
     }
 
@@ -96,6 +108,7 @@ public class LogTable extends JTable {
                 return e.getResponseStatus().toString().matches(filterString);
             }
         };
+        this.currentFilterName = "Code matches " + filterString;
         this.sorter.setRowFilter(codeFilter);
     }
 }
