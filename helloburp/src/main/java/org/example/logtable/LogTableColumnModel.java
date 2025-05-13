@@ -18,8 +18,8 @@ public class LogTableColumnModel extends DefaultTableColumnModel {
         defaultColumns.add(Arrays.asList("Number", order++, true, "", "#"));
         defaultColumns.add(Arrays.asList("Host", order++, true, "", "Host"));
         defaultColumns.add(Arrays.asList("Method", order++, true, "", "Method"));
-        defaultColumns.add(Arrays.asList("Tag", order++, true, "", "Tag"));
-        // comment out before
+        // defaultColumns.add(Arrays.asList("Tag", order++, true, "", "Tag"));
+        defaultColumns.add(Arrays.asList("Request Source", order++, true, "", "Tag"));
         defaultColumns.add(Arrays.asList("URL", order++, true, "", "URL"));
         defaultColumns.add(Arrays.asList("Params", order++, true, "", "Params"));
         defaultColumns.add(Arrays.asList("Edited", order++, false, "", "Edited"));

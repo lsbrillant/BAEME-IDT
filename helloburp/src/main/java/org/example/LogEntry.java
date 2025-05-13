@@ -76,6 +76,7 @@ public class LogEntry {
     // Metadata for tagging
     private String hostname; // w/o port number
     private String host; // w/ port number
+    private String requestSource;
     private String urlString; // url
     private URI uri;
     private String httpMethod; // method
@@ -642,17 +643,12 @@ public class LogEntry {
                     this.number, // int
                     this.hostname != null ? this.hostname : "N/A", // String w/o port number
                     this.httpMethod != null ? this.httpMethod : "UNKNOWN", // String
+                    this.requestSource != null ? this.requestSource : "N/A",
                     //this.request != null ? this.request.url() : "N/A", // URL from request
                     this.urlString != null ? this.urlString : "N/A",
                     this.parameters != null ? this.request.parameters() : new ArrayList<>(), // Parameters
-                    // need to get the processed ones instead
-                    //this.request.parameters(),
-                    // everything past here is null
                     this.edited, // Boolean: edited status
                     this.responseStatus != -1 ? this.responseStatus : "UNKNOWN", // Response status code
-                    //this.responseStatus = response.statusCode() != -1 ? response.statusCode() : 0
-                    //this.response.statusCode(),
-                    //this.responseStatus,
                     this.responseBodyLength, // Response length
                     this.responseMimeType != null ? this.responseMimeType : "UNKNOWN", // Response mime type
                     this.extension != null ? this.extension : "N/A", // File extension
