@@ -14,6 +14,8 @@ public class TabView {
     private JPanel topPanel;
     @Getter
     private JPanel sidePanel;
+    private JTable topTable;
+    private JTable sideTable;
 
     TabView(TabController controller) {
         this.controller = controller;
@@ -24,10 +26,20 @@ public class TabView {
     }
 
     private void buildTopPanel() {
-        JTable topTable = new JTable(controller.getModel().getTopPanelModel());
+        this.topTable = new JTable(controller.getModel().getTopPanelModel());
         topTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         topTable.setTableHeader(null);
         topTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        topTable.setCellSelectionEnabled(true);
+
+//        topTable.getSelectionModel().addListSelectionListener(e -> {
+//            if (e.getValueIsAdjusting()) return;
+//            int selectedColumn = topTable.convertColumnIndexToModel(topTable.getSelectedColumn());
+//            if (selectedColumn < 0) return;
+//            Tab tab = (Tab) controller.getModel().getTopPanelModel().getValueAt(0, selectedColumn);
+//            controller.getLogTableController().getLogTable().getSorter().setRowFilter(tab.getFilter());
+//            this.sideTable.clearSelection();
+//        });
 
         JButton newButton = new JButton("Create Tab");
         newButton.addActionListener(e -> {
@@ -55,7 +67,7 @@ public class TabView {
     }
 
     private void buildSidePanel() {
-        JTable sideTable = new JTable(controller.getModel().getSidePanelModel());
+        this.sideTable = new JTable(controller.getModel().getSidePanelModel());
 //        sideTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         sideTable.setTableHeader(null);
         sideTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

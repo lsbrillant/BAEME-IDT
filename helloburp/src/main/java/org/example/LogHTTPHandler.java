@@ -3,6 +3,7 @@ package org.example;
 import burp.api.montoya.http.handler.*;
 import org.example.logtable.LogTableController;
 
+import javax.swing.*;
 import java.util.Date;
 import java.util.List;
 
@@ -18,7 +19,9 @@ public class LogHTTPHandler implements HttpHandler {
         Date arrivalTime = new Date();
         LogEntry entry = new LogEntry(requestToBeSent, arrivalTime);
         entry.setMessageId(requestToBeSent.messageId());
-        this.logTableController.getLogTableModel().addEntry(entry);
+        SwingUtilities.invokeLater(() -> {
+            this.logTableController.getLogTableModel().addEntry(entry);
+        }); // thread-safe so the table actually displays all requests :)
         logProcessor.processIfComplete(entry, requestToBeSent,null);
         return RequestToBeSentAction.continueWith(requestToBeSent);
     }

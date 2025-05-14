@@ -111,4 +111,24 @@ public class LogTable extends JTable {
         this.currentFilterName = "Code matches " + filterString;
         this.sorter.setRowFilter(codeFilter);
     }
+
+    public void setGenericFilter(String filterString, int columnIndex) {
+        if (filterString.isEmpty()) {
+            this.sorter.setRowFilter(null);
+            return;
+        }
+        RowFilter<LogTableModel, Integer> genericFilter = new RowFilter<LogTableModel, Integer>() {
+            public boolean include(Entry<? extends LogTableModel, ? extends Integer> entry) {
+                if (entry.getModel().getColumnName(columnIndex).equals("Number")) {
+                    return Integer.toString(entry.getIdentifier() + 1).matches(filterString);
+                } else {
+                    LogEntry e = entry.getModel().getRow(entry.getIdentifier());
+                    String data = e.getData().get(columnIndex).toString();
+                    return data.matches(filterString);
+                }
+            }
+        };
+        this.currentFilterName = getModel().getColumnName(columnIndex) + " matches " + filterString;
+        this.sorter.setRowFilter(genericFilter);
+    }
 }

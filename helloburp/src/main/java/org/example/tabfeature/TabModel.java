@@ -25,8 +25,8 @@ public class TabModel {
         this.controller = controller;
         this.allTabs = new ArrayList<>();
         this.activeTabs = new ArrayList<>();
-        allTabs.add(new Tab(RowFilter.regexFilter(".*"), "Tab 1"));
-        allTabs.add(new Tab(RowFilter.regexFilter("301"), "dsfhusdhfiuhsduifhdsuifhuidshfuidshfiudshufi"));
+        allTabs.add(new Tab(RowFilter.regexFilter(".*"), "Dashboard"));
+//        allTabs.add(new Tab(RowFilter.regexFilter("204"), "dsfhusdhfiuhsduifhdsuifhuidshfuidshfiudshufi"));
 
         this.sidePanelModel = new AbstractTableModel() {
             @Override

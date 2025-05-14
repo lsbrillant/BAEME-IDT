@@ -122,6 +122,20 @@ public class FilterFeature extends JPanel {
                 });
                 this.activeFilterPanel.add(headerField);
                 this.activeFilterPanel.add(filterOptionsField);
+            } else if (s != null && !s.isEmpty()) {
+                this.activeFilterPanel.add(new JLabel("matches"));
+                JTextField genericField = new JTextField(10);
+                int colIndex = Arrays.asList(logTableController.getLogTableModel().getColumnNames()).indexOf(s);
+
+                genericField.addKeyListener(new KeyAdapter() {
+                    @Override
+                    public void keyPressed(KeyEvent e) {
+                        if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+                            setFilter("generic", genericField.getText(), colIndex);
+                        }
+                    }
+                });
+                this.activeFilterPanel.add(genericField);
             }
             this.activeFilterPanel.revalidate();
             this.activeFilterPanel.repaint();
@@ -160,12 +174,19 @@ public class FilterFeature extends JPanel {
             case "search": {
                 this.logTableController.getLogTable().setFilter("");
                 formatFilter("");
+                break;
             }
             case "code": {
                 this.logTableController.getLogTable().setCodeFilter("");
+                break;
             }
             case "header": {
                 this.logTableController.getLogTable().setHeaderFilter("", "", false);
+                break;
+            }
+            case "generic": {
+                this.logTableController.getLogTable().setGenericFilter("",  0);
+                break;
             }
         }
 
@@ -217,6 +238,20 @@ public class FilterFeature extends JPanel {
                     clearFilter(filterType);
                 } else {
                     logTableController.getLogTable().setCodeFilter(codeFilterString);
+                }
+                LogTable logTable = logTableController.getLogTable();
+                if (logTable.getSelectedRow() != -1) {
+                    logTable.scrollRectToVisible(logTable.getCellRect(logTable.getSelectedRow(), 0, true));
+                }
+                break;
+            }
+            case "generic": {
+                String filterString = (String) args[0];
+                int columnIndex = (int) args[1];
+                if (filterString.equals("") || filterString.matches(" +")) {
+                    clearFilter(filterType);
+                } else {
+                    logTableController.getLogTable().setGenericFilter(filterString, columnIndex);
                 }
                 LogTable logTable = logTableController.getLogTable();
                 if (logTable.getSelectedRow() != -1) {
