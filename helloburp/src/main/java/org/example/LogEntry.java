@@ -106,8 +106,9 @@ public class LogEntry {
     private String responseContentType;
     private String extension;
     private String title;
-    private String tls;
-    private String ip;
+    private boolean tls;
+    @Setter
+    private String requestSource;
     private String time;
 
     // may need
@@ -232,13 +233,13 @@ public class LogEntry {
         return title;
     }
 
-    public String getTls() {
+    public boolean getTls() {
         return tls;
     }
 
-    public String getIp() {
-        return ip;
-    }
+//    public String getIp() {
+//        return ip;
+//    }
 
     public String getFormattedResponseTime() {
         return formattedResponseTime;
@@ -338,6 +339,8 @@ public class LogEntry {
                 || (this.protocol.equals("http") && this.targetPort == 80);
         // hosts
         this.host = this.protocol + "://" + this.hostname + (isDefaultPort ? "" : ":" + this.targetPort);
+        // Process whether we use TLS
+        this.tls = this.request.httpService().secure();
         // Process the HTTP method
         this.httpMethod = request.method();
 
@@ -657,12 +660,12 @@ public class LogEntry {
                     this.responseMimeType != null ? this.responseMimeType : "UNKNOWN", // Response mime type
                     this.extension != null ? this.extension : "N/A", // File extension
                     this.title != null ? this.title : "Untitled", // Page title
-                    this.tls != null ? this.tls : "N/A", // TLS info
-                    this.ip != null ? this.ip : "N/A", // IP address
+                    this.tls, // TLS info
+                    this.requestSource != null ? this.requestSource : "N/A", // IP address
                     this.sentCookies != null ? this.sentCookies : "N/A", // Cookies
                     // these work okay
                     this.requestDateTime != null ? this.requestDateTime.toString() : "N/A", // Request datetime
-                    this.status != null ? this.status.toString() : "N/A", // Status
+//                    this.status != null ? this.status.toString() : "N/A", // Status
                     //this.debug != null ? this.debug : "N/A",
                     //this.responseDateTime != null ? this.responseDateTime.toString() : "N/A", // Response datetime
                     this.tags != null ? this.tags : new ArrayList<>() // Tags

@@ -18,6 +18,7 @@ public class LogHTTPHandler implements HttpHandler {
     public RequestToBeSentAction handleHttpRequestToBeSent(HttpRequestToBeSent requestToBeSent) {
         Date arrivalTime = new Date();
         LogEntry entry = new LogEntry(requestToBeSent, arrivalTime);
+        entry.setRequestSource(requestToBeSent.toolSource().toolType().toolName());
         entry.setMessageId(requestToBeSent.messageId());
         SwingUtilities.invokeLater(() -> {
             this.logTableController.getLogTableModel().addEntry(entry);
