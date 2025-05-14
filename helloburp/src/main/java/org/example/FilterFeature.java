@@ -48,7 +48,6 @@ public class FilterFeature extends JPanel {
         ArrayList<String> columnNames = new ArrayList<>();
         columnNames.add(""); // default to empty
         columnNames.add("Header");
-        columnNames.add("Code"); // TODO: remove once this just becomes a column itself
         columnNames.addAll(Arrays.asList(logTableController.getLogTableModel().getColumnNames()));
         this.filterField = new JComboBox<>(columnNames.toArray());
         filterField.addActionListener(e -> {
@@ -122,6 +121,19 @@ public class FilterFeature extends JPanel {
                 });
                 this.activeFilterPanel.add(headerField);
                 this.activeFilterPanel.add(filterOptionsField);
+            } else if (s != null && s.equals("Tags")) {
+                this.activeFilterPanel.add(new JLabel("has tag"));
+                JTextField tagField = new JTextField(10);
+
+                tagField.addKeyListener(new KeyAdapter() {
+                    @Override
+                    public void keyPressed(KeyEvent e) {
+                        if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+                            setFilter("tags", tagField.getText());
+                        }
+                    }
+                });
+                this.activeFilterPanel.add(tagField);
             } else if (s != null && !s.isEmpty()) {
                 this.activeFilterPanel.add(new JLabel("matches"));
                 JTextField genericField = new JTextField(10);
@@ -188,6 +200,10 @@ public class FilterFeature extends JPanel {
                 this.logTableController.getLogTable().setGenericFilter("",  0);
                 break;
             }
+            case "tags": {
+                this.logTableController.getLogTable().setTagFilter("");
+                break;
+            }
         }
 
     }
@@ -239,6 +255,19 @@ public class FilterFeature extends JPanel {
                 } else {
                     logTableController.getLogTable().setCodeFilter(codeFilterString);
                 }
+                LogTable logTable = logTableController.getLogTable();
+                if (logTable.getSelectedRow() != -1) {
+                    logTable.scrollRectToVisible(logTable.getCellRect(logTable.getSelectedRow(), 0, true));
+                }
+                break;
+            } case "tags": {
+                String tagFilter = (String) args[0];
+                if (tagFilter == null || tagFilter.isBlank()) {
+                    clearFilter(filterType);
+                } else {
+                    logTableController.getLogTable().setTagFilter(tagFilter);
+                }
+
                 LogTable logTable = logTableController.getLogTable();
                 if (logTable.getSelectedRow() != -1) {
                     logTable.scrollRectToVisible(logTable.getCellRect(logTable.getSelectedRow(), 0, true));

@@ -131,4 +131,22 @@ public class LogTable extends JTable {
         this.currentFilterName = getModel().getColumnName(columnIndex) + " matches " + filterString;
         this.sorter.setRowFilter(genericFilter);
     }
+
+    public void setTagFilter(String tagFilter) {
+        if (tagFilter == null || tagFilter.isBlank()) {
+            this.sorter.setRowFilter(null);
+            return;
+        }
+
+        RowFilter<LogTableModel, Integer> tagFilterLogic = new RowFilter<>() {
+            public boolean include(Entry<? extends LogTableModel, ? extends Integer> entry) {
+                LogEntry logEntry = entry.getModel().getRow(entry.getIdentifier());
+                List<String> tags = logEntry.getTags();
+                return tags.stream().anyMatch(tag -> tag.equalsIgnoreCase(tagFilter));
+            }
+        };
+
+        this.currentFilterName = "Tags: " + tagFilter;
+        this.sorter.setRowFilter(tagFilterLogic);
+    }
 }
