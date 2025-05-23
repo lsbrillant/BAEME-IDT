@@ -38,17 +38,10 @@ public class MultiTagCellRenderer extends JPanel implements TableCellRenderer {
 
     private Color getColorForTag(String tag) {
         return switch (tag.toLowerCase()) {
-            case "tag 1" -> new Color(0xFFCDD2);
-            case "tag 2" -> new Color(0xC8E6C9);
-            case "tag 3" -> new Color(0xBBDEFB);
-            case "tag 4" -> new Color(0xFFF9C4);
-            case "tag 5" -> new Color(0xD1C4E9);
-            case "tag 6" -> new Color(0xB2EBF2);
-            case "tag 7" -> new Color(0xFFE0B2);
-            case "tag 8" -> new Color(0xDCEDC8);
-            case "tag 9" -> new Color(0xF8BBD0);
-            case "tag 10" -> new Color(0xC5CAE9);
-            default -> new Color(0xFF0000); // default to dark red for custom tags (might change still)
+            case "baseline" -> new Color(0xBBDEFB);
+            case "retest" -> new Color(0xFFCDD2);
+            case "tested" -> new Color(0xC8E6C9);
+            default -> new Color(0xFFAB91); // default to dark red for custom tags (might change still)
         };
     }
 }
