@@ -24,6 +24,8 @@ public class LogTable extends JTable {
         this.setRowSorter(sorter);
         this.currentFilterName = "";
 
+        this.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+
         this.getSelectionModel().addListSelectionListener(e -> {
             if(e.getValueIsAdjusting()) return;
             RequestViewerController requestViewerController = this.controller.getRequestViewerController();
