@@ -30,11 +30,13 @@ public class LogTableController {
     }
 
     public void tagSelectedRequest(String tag) {
-        int selectedRow = logTable.getSelectedRow();
-        if (selectedRow >= 0) {
-            int modelRow = logTable.convertRowIndexToModel(selectedRow);
-            int tagColumnIndex = getTagsColumnIndex();
+        int[] selectedRows = logTable.getSelectedRows();
+        if (selectedRows.length == 0) return;
 
+        int tagColumnIndex = getTagsColumnIndex();
+
+        for (int viewRow : selectedRows) {
+            int modelRow = logTable.convertRowIndexToModel(viewRow);
             LogEntry entry = logTableModel.getRow(modelRow);
             List<String> currentTags = entry.getTags();
 
