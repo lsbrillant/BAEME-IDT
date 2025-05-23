@@ -67,7 +67,11 @@ public class FilterFeature extends JPanel {
                         }
                     }
                 });
+
+                JButton codeButton = new JButton("Enter");
+                codeButton.addActionListener(e1 -> setFilter("code", codeField.getText()));
                 this.activeFilterPanel.add(codeField);
+                this.activeFilterPanel.add(codeButton);
             } else if (s != null && s.equals("Header")) {
                 JTextField headerField = new JTextField(15);
                 JTextField headerFilterField = new JTextField(5);
@@ -119,8 +123,23 @@ public class FilterFeature extends JPanel {
                     this.activeFilterPanel.revalidate();
                     this.activeFilterPanel.repaint();
                 });
+
+                JButton headerButton = new JButton("Enter");
+                headerButton.addActionListener(e1 -> {
+                    String selectedFilter = (String) filterOptionsField.getSelectedItem();
+                    if (selectedFilter == null) {
+                        return;
+                    }
+                    if (selectedFilter.contains("present")) {
+                        setFilter("header", headerField.getText(), null, selectedFilter.equals("not present"));
+                    } else if (selectedFilter.equals("matches")) {
+                        setFilter("header", headerField.getText(), headerFilterField.getText(), false);
+                    }
+                });
+
                 this.activeFilterPanel.add(headerField);
                 this.activeFilterPanel.add(filterOptionsField);
+                this.activeFilterPanel.add(headerButton);
             } else if (s != null && s.equals("Tags")) {
                 this.activeFilterPanel.add(new JLabel("has tag"));
                 JTextField tagField = new JTextField(10);
@@ -133,7 +152,11 @@ public class FilterFeature extends JPanel {
                         }
                     }
                 });
+
+                JButton tagButton = new JButton("Enter");
+                tagButton.addActionListener(e1 -> setFilter("tags", tagField.getText()));
                 this.activeFilterPanel.add(tagField);
+                this.activeFilterPanel.add(tagButton);
             } else if (s != null && !s.isEmpty()) {
                 this.activeFilterPanel.add(new JLabel("matches"));
                 JTextField genericField = new JTextField(10);
@@ -147,18 +170,30 @@ public class FilterFeature extends JPanel {
                         }
                     }
                 });
+                JButton genericButton = new JButton("Enter");
+                genericButton.addActionListener(e1 -> setFilter("generic", genericField.getText(), colIndex));
+
                 this.activeFilterPanel.add(genericField);
+                this.activeFilterPanel.add(genericButton);
             }
             this.activeFilterPanel.revalidate();
             this.activeFilterPanel.repaint();
             // above two lines force the JPanel to update
         });
 
+        // UNIVERSAL BUTTON - save the states
+//        JButton enterButton = new JButton("Enter");
+//        enterButton.addActionListener(e -> {
+//            setFilter("search", (String) searchField.getEditor().getItem());
+//            searchField.getRootPane().requestFocus(true);
+//        });
+
         this.add(filterLabel);
         this.add(filterField);
         this.add(activeFilterPanel);
         this.add(searchLabel);
         this.add(searchField);
+        //this.add(enterButton);
 
         JButton exportButton = new JButton("Export Visible Requests");
         exportButton.setToolTipText("Download all currently visible rows as a CSV file");
