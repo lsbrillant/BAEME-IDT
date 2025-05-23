@@ -44,10 +44,10 @@ public class TabView {
         JButton newButton = new JButton("Create Tab");
         newButton.addActionListener(e -> {
             RowFilter<?, ?> f = controller.getLogTableController().getLogTable().getSorter().getRowFilter();
+            Tab newTab;
             if (f != null) {
                 String input = JOptionPane.showInputDialog(this.topPanel, "Enter tab name:",
                         this.controller.getLogTableController().getLogTable().getCurrentFilterName());
-                Tab newTab;
                 if (input != null && !input.trim().isEmpty()) {
                     newTab = new Tab((RowFilter<LogTableModel, Integer>) f, input);
                     controller.getModel().addTab(newTab, "side");
@@ -56,6 +56,11 @@ public class TabView {
                             this.controller.getLogTableController().getLogTable().getCurrentFilterName());
                     controller.getModel().addTab(newTab, "side");
                 }
+            } else {
+                f = RowFilter.regexFilter("$^"); // empty, won't return any matches
+                String input = JOptionPane.showInputDialog(this.topPanel, "Enter tab name:");
+                newTab = new Tab((RowFilter<LogTableModel, Integer>) f, input);
+                controller.getModel().addTab(newTab, "side");
             }
         });
         this.topPanel.add(newButton, BorderLayout.WEST);
