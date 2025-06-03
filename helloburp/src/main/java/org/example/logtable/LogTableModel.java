@@ -18,8 +18,6 @@ public class LogTableModel extends AbstractTableModel {
         this.entries = Collections.synchronizedList(new ArrayList<>());
         this.columnNames = new String[]{"Number", "Host", "Method", "URL", "Param count", "Edited", "Code", "Length", "MIME", "Extension", "Title", "TLS", "Request Source", "Cookies", "Time", "Tags"};
         this.controller = controller;
-//        this.entries.add(Arrays.asList(1, "http://dhruviscool.com", "GET"));
-//        this.entries.add(Arrays.asList(2, "http://sheaminiscool.com", "POST"));
     }
 
     public int getRowCount() {

@@ -23,8 +23,8 @@ public class AnnotationsTab {
         this.panel = new JPanel(new BorderLayout());
 
         LogTable logTable = logTableController.getLogTable();
-        JScrollPane scrollPane = new JScrollPane(logTable, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS); // TODO: change column width defaults
+        JScrollPane scrollPane = new JScrollPane(logTable, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 
         RequestViewerController requestViewerController = new RequestViewerController(montoya);
         logTableController.setRequestViewerController(requestViewerController); // hack to avoid creating LogViewController

@@ -107,23 +107,6 @@ public class FilterFeature extends JPanel {
                     }
                 });
 
-                filterOptionsField.addActionListener(e1 -> {
-                    String selectedFilterOption = (String) filterOptionsField.getSelectedItem();
-
-                    if (selectedFilterOption != null && selectedFilterOption.equals("matches")) {
-                        this.activeFilterPanel.add(headerFilterField);
-                    } else if (selectedFilterOption != null && !selectedFilterOption.isEmpty()) {
-                        if (this.activeFilterPanel.getComponent(this.activeFilterPanel.getComponentCount() - 1) instanceof JTextField) {
-                            this.activeFilterPanel.remove(this.activeFilterPanel.getComponentCount() - 1);
-                        }
-                        // headerName, filterString, inverted
-                        setFilter("header", headerField.getText(), null,
-                                selectedFilterOption.equals("not present"));
-                    }
-                    this.activeFilterPanel.revalidate();
-                    this.activeFilterPanel.repaint();
-                });
-
                 JButton headerButton = new JButton("Enter");
                 headerButton.addActionListener(e1 -> {
                     String selectedFilter = (String) filterOptionsField.getSelectedItem();
@@ -137,9 +120,27 @@ public class FilterFeature extends JPanel {
                     }
                 });
 
+                filterOptionsField.addActionListener(e1 -> {
+                    String selectedFilterOption = (String) filterOptionsField.getSelectedItem();
+
+                    if (selectedFilterOption != null && selectedFilterOption.equals("matches")) {
+                        this.activeFilterPanel.add(headerFilterField);
+                        this.activeFilterPanel.add(headerButton);
+                    } else if (selectedFilterOption != null && !selectedFilterOption.isEmpty()) {
+                        if (this.activeFilterPanel.getComponent(this.activeFilterPanel.getComponentCount() - 2) instanceof JTextField) {
+                            this.activeFilterPanel.remove(this.activeFilterPanel.getComponentCount() - 2);
+                        }
+                        // headerName, filterString, inverted
+                        setFilter("header", headerField.getText(), null,
+                                selectedFilterOption.equals("not present"));
+                    }
+                    this.activeFilterPanel.revalidate();
+                    this.activeFilterPanel.repaint();
+                });
+
                 this.activeFilterPanel.add(headerField);
                 this.activeFilterPanel.add(filterOptionsField);
-                this.activeFilterPanel.add(headerButton);
+//                this.activeFilterPanel.add(headerButton);
             } else if (s != null && s.equals("Tags")) {
                 this.activeFilterPanel.add(new JLabel("has tag"));
                 JTextField tagField = new JTextField(10);
