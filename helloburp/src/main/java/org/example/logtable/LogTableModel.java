@@ -16,7 +16,7 @@ public class LogTableModel extends AbstractTableModel {
 
     public LogTableModel(LogTableController controller) {
         this.entries = Collections.synchronizedList(new ArrayList<>());
-        this.columnNames = new String[]{"Number", "Host", "Method", "URL", "Params", "Edited", "Code", "Length", "MIME", "Extension", "Title", "TLS", "Request Source", "Cookies", "Time", "Tags"};
+        this.columnNames = new String[]{"Number", "Host", "Method", "URL", "Param count", "Edited", "Code", "Length", "MIME", "Extension", "Title", "TLS", "Request Source", "Cookies", "Time", "Tags"};
         this.controller = controller;
 //        this.entries.add(Arrays.asList(1, "http://dhruviscool.com", "GET"));
 //        this.entries.add(Arrays.asList(2, "http://sheaminiscool.com", "POST"));
@@ -45,6 +45,10 @@ public class LogTableModel extends AbstractTableModel {
         String columnName = columnNames[column];
         if ("Tags".equalsIgnoreCase(columnName)) {
             return this.entries.get(row).getTags();
+        }
+
+        if ("Param Count".equalsIgnoreCase(columnName)) {
+            return entry.getParamCount();
         }
         List<Object> data = entry.getData();
         return data.get(column);

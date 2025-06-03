@@ -351,7 +351,6 @@ public class LogEntry {
 
         //extract non-cookie parameters
         this.parameters = request.parameters().stream()
-                .filter(param -> param.type() != HttpParameterType.COOKIE)
                 .map(HttpParameter::name)
                 .collect(Collectors.toList());
 
@@ -647,7 +646,7 @@ public class LogEntry {
                     this.httpMethod != null ? this.httpMethod : "UNKNOWN", // String
                     //this.request != null ? this.request.url() : "N/A", // URL from request
                     this.urlString != null ? this.urlString : "N/A",
-                    this.parameters != null ? this.request.parameters() : new ArrayList<>(), // Parameters
+                    this.getParamCount(), // Parameters
                     // need to get the processed ones instead
                     //this.request.parameters(),
                     // everything past here is null
@@ -671,6 +670,11 @@ public class LogEntry {
                     this.tags != null ? this.tags : new ArrayList<>() // Tags
             );
         }
+
+        public int getParamCount() {
+            return parameters == null ? 0 : parameters.size();
+        }
+
 
         public enum Status {
             UNPROCESSED, AWAITING_RESPONSE, PROCESSED, FAILED, FAILED_PROCESS, NO_PROCESS,
