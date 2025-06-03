@@ -46,6 +46,33 @@ public class LogTable extends JTable {
                 break;
             }
         }
+
+        for (int i = 0; i < getColumnCount(); i++) {
+            String colName = getColumnName(i).toLowerCase();
+            int width;
+
+            switch (colName) {
+                case "number" -> width = 40;
+                case "method" -> width = 60;
+                case "host" -> width = 150;
+                case "url" -> width = 200;
+                case "params" -> width = 120;
+                case "code" -> width = 50;
+                case "length" -> width = 70;
+                case "mime" -> width = 80;
+                case "extension" -> width = 80;
+                case "title" -> width = 100;
+                case "edited" -> width = 70;
+                case "tls" -> width = 50;
+                case "ip" -> width = 100;
+                case "cookies" -> width = 80;
+                case "time" -> width = 100;
+                case "status" -> width = 100;
+                case "tags" -> width = 350;
+                default -> width = 100;
+            }
+            getColumnModel().getColumn(i).setPreferredWidth(width);
+        }
     }
 
     public void setFilter(String filter) {
