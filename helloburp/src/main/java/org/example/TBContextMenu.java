@@ -20,13 +20,20 @@ public class TBContextMenu implements ContextMenuItemsProvider {
 
     @Override
     public List<Component> provideMenuItems(ContextMenuEvent event) {
+        // TODO: send with tags
+        // TODO: send to specific tab
         List<Component> menuItems = new ArrayList<>();
         List<HttpRequestResponse> contextInfo = event.selectedRequestResponses();
-        JButton sendButton = new JButton("Send To TidyBurp");
+        if (event.messageEditorRequestResponse().isPresent()) {
+            contextInfo.add(event.messageEditorRequestResponse().get().requestResponse());
+        }
+        JMenuItem sendButton = new JMenuItem("Send to TidyBurp");
         sendButton.addActionListener(e -> {
             for (HttpRequestResponse requestResponse : contextInfo) {
                 LogEntry entry = new LogEntry(requestResponse.request(), requestResponse.response());
-                entry.process(); // is this working??
+                while(!entry.process()) {
+                    entry.process();
+                } // this is kinda weird; keep processing until we have status PROCESSED
                 entry.setRequestSource(event.toolType().toString());
                 controller.getLogTableModel().addEntry(entry);
             }

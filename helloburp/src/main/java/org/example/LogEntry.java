@@ -70,6 +70,7 @@ public class LogEntry {
     private static final Pattern HTML_TITLE_PATTERN = Pattern.compile("<title>(.*?)</title>", Pattern.CASE_INSENSITIVE);
 
     // from LogTableColumnModel
+    @Setter
     private int number;
     private String tag;
 

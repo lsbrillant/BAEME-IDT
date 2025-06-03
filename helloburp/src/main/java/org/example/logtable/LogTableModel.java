@@ -38,9 +38,9 @@ public class LogTableModel extends AbstractTableModel {
     @Override
     public Object getValueAt(int row, int column) {
         LogEntry entry = entries.get(row);
-        if (column == 0) { // request number column
-            return row + 1;
-        }
+//        if (column == 0) { // request number column
+//            return row + 1;
+//        }
 
         String columnName = columnNames[column];
         if ("Tags".equalsIgnoreCase(columnName)) {
@@ -74,6 +74,7 @@ public class LogTableModel extends AbstractTableModel {
     }
 
     public void addEntry(LogEntry entry) {
+        entry.setNumber(this.entries.size() + 1);
         this.entries.add(entry);
         fireTableRowsInserted(this.entries.size() - 1, this.entries.size() - 1);
     }
@@ -86,6 +87,15 @@ public class LogTableModel extends AbstractTableModel {
             entry.addTag(tag);
             fireTableCellUpdated(row, column);
         }
+    }
+
+    // TODO: make this more robust. for now, treat only the Number column as an integer column
+    @Override
+    public Class<?> getColumnClass(int column) {
+        if (column == 0) {
+            return Integer.class;
+        }
+        return String.class;
     }
 
     // TODO: a lot more methods (as relevant), see LoggerPlusPlus as reference

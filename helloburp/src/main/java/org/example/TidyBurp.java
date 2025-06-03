@@ -33,8 +33,8 @@ public class TidyBurp implements BurpExtension {
         LogTableModel logTableModel = controller.getLogTableModel();
         LogProcessor processor = new LogProcessor();
         montoyaApi.http().registerHttpHandler(new LogHTTPHandler(controller, processor));
-        TBContextMenu contextMenu = new TBContextMenu(controller);
-        montoyaApi.userInterface().registerContextMenuItemsProvider(contextMenu); // might need LTC?
+        TBContextMenu contextMenu = new TBContextMenu(controller); // might need LTC?
+        montoyaApi.userInterface().registerContextMenuItemsProvider(contextMenu);
 
         AnnotationsTab annotationsTab = new AnnotationsTab(controller, montoya);
         montoyaApi.userInterface().registerSuiteTab(annotationsTab.name(), annotationsTab.getPanel());
