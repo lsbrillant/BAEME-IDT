@@ -135,11 +135,14 @@ public class FilterFeature extends JPanel {
                     String selectedFilterOption = (String) filterOptionsField.getSelectedItem();
 
                     if (selectedFilterOption != null && selectedFilterOption.equals("matches")) {
-                        this.activeFilterPanel.add(headerFilterField);
-//                        this.activeFilterPanel.add(headerButton);
-                    } else if (selectedFilterOption != null && !selectedFilterOption.isEmpty()) {
-                        if (this.activeFilterPanel.getComponent(this.activeFilterPanel.getComponentCount() - 1) instanceof JTextField) {
+                        if (this.activeFilterPanel.getComponent(this.activeFilterPanel.getComponentCount() - 1) instanceof JButton) {
                             this.activeFilterPanel.remove(this.activeFilterPanel.getComponentCount() - 1);
+                        }
+                        this.activeFilterPanel.add(headerFilterField);
+                        this.activeFilterPanel.add(headerButton);
+                    } else if (selectedFilterOption != null && !selectedFilterOption.isEmpty()) {
+                        if (this.activeFilterPanel.getComponent(this.activeFilterPanel.getComponentCount() - 2) instanceof JTextField) {
+                            this.activeFilterPanel.remove(this.activeFilterPanel.getComponentCount() - 2);
                         }
                         // headerName, filterString, inverted
                         setFilter("header", headerField.getText(), null,
