@@ -30,6 +30,7 @@ public class AnnotationsTab {
         logTableController.setRequestViewerController(requestViewerController); // hack to avoid creating LogViewController
 
         TabController tabController = new TabController(logTableController);
+        logTableController.setTabController(tabController);
 
         VariableViewPanel bottomPanel = new VariableViewPanel(null, "msgviewlayout",
                 requestViewerController.getRequestViewerPanel(), "Request/Response",

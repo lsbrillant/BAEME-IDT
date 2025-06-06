@@ -2,11 +2,13 @@ package org.example.tabfeature;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.example.LogEntry;
 import org.example.logtable.LogTableModel;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import lombok.Getter;
 
@@ -110,5 +112,17 @@ public class TabModel {
 //        TabView v = this.controller.getView();
 //        v.getSidePanel().revalidate();
 //        v.getSidePanel().repaint();
+    }
+
+    public void addEntryToTab(Tab tab, LogEntry otherEntry) {
+        RowFilter<LogTableModel, Integer> currFilter = tab.getFilter();
+        RowFilter<LogTableModel, Integer> exactNumberFilter = new RowFilter<LogTableModel, Integer>() {
+            @Override
+            public boolean include(Entry<? extends LogTableModel, ? extends Integer> entry) {
+                LogEntry e = entry.getModel().getRow(entry.getIdentifier());
+                return e.getNumber() == otherEntry.getNumber();
+            }
+        };
+        tab.setFilter(RowFilter.orFilter(Arrays.asList(currFilter, exactNumberFilter)));
     }
 }

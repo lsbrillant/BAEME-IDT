@@ -4,6 +4,7 @@ import org.example.LogEntry;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import lombok.Getter;
@@ -99,10 +100,10 @@ public class LogTableModel extends AbstractTableModel {
         }
     }
 
-    // TODO: make this more robust. for now, treat only the Number column as an integer column
     @Override
     public Class<?> getColumnClass(int column) {
-        if (column == 0) {
+        List<String> integerColumns = Arrays.asList(new String[]{"Number", "Param Count", "Code", "Length"});
+        if (integerColumns.contains(getColumnName(column))) {
             return Integer.class;
         }
         return String.class;

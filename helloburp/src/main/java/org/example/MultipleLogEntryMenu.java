@@ -10,6 +10,7 @@ import burp.api.montoya.scanner.CrawlConfiguration;
 import burp.api.montoya.scanner.audit.Audit;
 import org.example.logtable.LogTable;
 import org.example.logtable.LogTableController;
+import org.example.tabfeature.Tab;
 
 import javax.swing.*;
 import java.awt.datatransfer.Clipboard;
@@ -69,7 +70,27 @@ public class MultipleLogEntryMenu extends JPopupMenu {
         sendToComparer.add(comparerResponse);
         this.add(sendToComparer);
 
-        this.add(new Separator());
+        this.add(new JPopupMenu.Separator());
+
+        List<Tab> allTabs = logTableController.getTabController().getModel().getAllTabs();
+        JMenu sendToTab = new JMenu("Send " + selectedEntries.size() +  " selected items to Tab");
+
+        for (Tab tab : allTabs) {
+            JMenuItem sendToTabItem = new JMenuItem(new AbstractAction(tab.getName()) {
+                @Override
+                public void actionPerformed(ActionEvent actionEvent) {
+                    for (LogEntry entry : selectedEntries) {
+                        logTableController.getTabController().getModel().addEntryToTab(tab, entry);
+                    }
+                }
+            });
+            sendToTab.add(sendToTabItem);
+        }
+
+        if (!allTabs.isEmpty()) {
+            this.add(sendToTab);
+            this.add(new JPopupMenu.Separator());
+        }
 
         JMenuItem removeItem = new JMenuItem(new AbstractAction("Remove " + selectedEntries.size() + " selected items") {
             @Override

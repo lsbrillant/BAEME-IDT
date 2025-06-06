@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.example.LogEntry;
 import org.example.requestviewer.RequestViewerController;
+import org.example.tabfeature.TabController;
+
 import java.util.List;
 
 
@@ -15,6 +17,9 @@ public class LogTableController {
     @Setter
     @Getter
     private boolean isLoggingEnabled;
+    @Setter
+    @Getter
+    private TabController tabController;
 
     public LogTableController() {
         this.logTableModel = new LogTableModel(this);

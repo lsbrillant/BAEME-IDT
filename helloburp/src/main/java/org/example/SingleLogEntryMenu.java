@@ -6,6 +6,7 @@ import burp.api.montoya.scanner.Crawl;
 import burp.api.montoya.scanner.CrawlConfiguration;
 import org.example.logtable.LogTable;
 import org.example.logtable.LogTableController;
+import org.example.tabfeature.Tab;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -13,6 +14,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 public class SingleLogEntryMenu extends JPopupMenu {
 
@@ -53,6 +55,25 @@ public class SingleLogEntryMenu extends JPopupMenu {
         this.add(sendToComparer);
 
         this.add(new JPopupMenu.Separator());
+
+        List<Tab> allTabs = logTableController.getTabController().getModel().getAllTabs();
+        JMenu sendToTab = new JMenu("Send to Tab");
+
+        for (Tab tab : allTabs) {
+            JMenuItem sendToTabItem = new JMenuItem(new AbstractAction(tab.getName()) {
+                @Override
+                public void actionPerformed(ActionEvent actionEvent) {
+                    logTableController.getTabController().getModel().addEntryToTab(tab, entry);
+                }
+            });
+            sendToTab.add(sendToTabItem);
+        }
+
+        if (!allTabs.isEmpty()) {
+            this.add(sendToTab);
+            this.add(new JPopupMenu.Separator());
+        }
+
 
         JMenuItem removeItem = new JMenuItem(new AbstractAction("Remove Item") {
             @Override
