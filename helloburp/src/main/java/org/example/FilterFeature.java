@@ -203,6 +203,16 @@ public class FilterFeature extends JPanel {
 //            searchField.getRootPane().requestFocus(true);
 //        });
 
+        JButton resetButton = new JButton("Reset");
+        resetButton.addActionListener(e1 -> {
+            this.activeFilterPanel.removeAll();
+            this.activeFilterPanel.revalidate();
+            this.activeFilterPanel.repaint();
+            this.filterField.setSelectedItem(null);
+            logTableController.getLogTable().setFilter(null);
+        });
+        this.add(resetButton);
+
         this.add(filterLabel);
         this.add(filterField);
         this.add(activeFilterPanel);
