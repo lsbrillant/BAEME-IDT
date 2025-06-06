@@ -13,11 +13,19 @@ public class LogTableModel extends AbstractTableModel {
     @Getter
     private final String[] columnNames;
     private final List<LogEntry> entries;
+    private int currNumber; // tracks what should be the number for the next request
 
     public LogTableModel(LogTableController controller) {
         this.entries = Collections.synchronizedList(new ArrayList<>());
         this.columnNames = new String[]{"Number", "Host", "Method", "URL", "Param count", "Edited", "Code", "Length", "MIME", "Extension", "Title", "TLS", "Request Source", "Cookies", "Time", "Tags"};
         this.controller = controller;
+        this.currNumber = 1;
+    }
+
+    public void removeEntry(LogEntry entry) {
+        int index = entries.indexOf(entry);
+        entries.remove(entry);
+        fireTableRowsDeleted(index, index);
     }
 
     public int getRowCount() {
@@ -76,7 +84,7 @@ public class LogTableModel extends AbstractTableModel {
     }
 
     public void addEntry(LogEntry entry) {
-        entry.setNumber(this.entries.size() + 1);
+        entry.setNumber(currNumber++);
         this.entries.add(entry);
         fireTableRowsInserted(this.entries.size() - 1, this.entries.size() - 1);
     }

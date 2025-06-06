@@ -1,0 +1,65 @@
+// Adapted closely from LoggerPlusPlus/logview/SingleLogEntryMenu.java
+package org.example;
+
+import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.scanner.Crawl;
+import burp.api.montoya.scanner.CrawlConfiguration;
+import org.example.logtable.LogTable;
+import org.example.logtable.LogTableController;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Collections;
+import java.util.Date;
+
+public class SingleLogEntryMenu extends JPopupMenu {
+
+    public SingleLogEntryMenu(final LogTableController logTableController, final LogEntry entry) {
+        final LogTable logTable = logTableController.getLogTable();
+
+        JMenuItem sendToRepeater = new JMenuItem(new AbstractAction("Send to Repeater") {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                TidyBurp.montoya.repeater().sendToRepeater(entry.getRequest());
+            }
+        });
+        this.add(sendToRepeater);
+
+        JMenuItem sendToIntruder = new JMenuItem(new AbstractAction("Send to Intruder") {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                TidyBurp.montoya.intruder().sendToIntruder(entry.getRequest());
+            }
+        });
+        this.add(sendToIntruder);
+
+        JMenu sendToComparer = new JMenu("Send to Comparer");
+        JMenuItem comparerRequest = new JMenuItem(new AbstractAction("Request") {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                TidyBurp.montoya.comparer().sendToComparer(entry.getRequest().toByteArray());
+            }
+        });
+        sendToComparer.add(comparerRequest);
+        JMenuItem comparerResponse = new JMenuItem(new AbstractAction("Response") {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                TidyBurp.montoya.comparer().sendToComparer(entry.getResponse().toByteArray());
+            }
+        });
+        sendToComparer.add(comparerResponse);
+        this.add(sendToComparer);
+
+        this.add(new JPopupMenu.Separator());
+
+        JMenuItem removeItem = new JMenuItem(new AbstractAction("Remove Item") {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                logTableController.getLogTableModel().removeEntry(entry);
+            }
+        });
+        this.add(removeItem);
+    }
+}

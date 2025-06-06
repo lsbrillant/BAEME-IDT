@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class TidyBurp implements BurpExtension {
-    public MontoyaApi montoya;
+    public static MontoyaApi montoya;
 
     @Override
     public void initialize(MontoyaApi montoyaApi) {

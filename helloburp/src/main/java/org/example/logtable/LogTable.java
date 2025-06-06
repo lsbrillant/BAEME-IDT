@@ -2,11 +2,18 @@ package org.example.logtable;
 
 import burp.api.montoya.http.message.HttpHeader;
 import org.example.LogEntry;
+import org.example.MultipleLogEntryMenu;
+import org.example.SingleLogEntryMenu;
 import org.example.requestviewer.RequestViewerController;
 
 import javax.swing.*;
 import javax.swing.table.TableRowSorter;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import lombok.Getter;
 
@@ -73,6 +80,54 @@ public class LogTable extends JTable {
             }
             getColumnModel().getColumn(i).setPreferredWidth(width);
         }
+
+        this.addMouseListener( new MouseAdapter()
+        {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                onMouseEvent(e);
+            }
+
+            @Override
+            public void mouseReleased( MouseEvent e ){
+                onMouseEvent(e);
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                onMouseEvent(e);
+            }
+
+            private void onMouseEvent(MouseEvent e){
+                if ( SwingUtilities.isRightMouseButton( e )){
+                    Point p = e.getPoint();
+                    int rowAtPoint = rowAtPoint(p);
+                    if(rowAtPoint == -1) return;
+
+                    if(IntStream.of(LogTable.this.getSelectedRows()).noneMatch(i -> i == rowAtPoint)){
+                        //We right clicked an unselected row. Set it as the selected row and update our selected
+                        setRowSelectionInterval(rowAtPoint, rowAtPoint);
+                    }
+
+                    LogTableModel model = controller.getLogTableModel();
+                    if(LogTable.this.getSelectedRowCount() == 1){
+                        LogEntry logEntry = model.getRow(convertRowIndexToModel(rowAtPoint));
+
+                        if (e.isPopupTrigger() && e.getComponent() instanceof JTable ) {
+                            new SingleLogEntryMenu(controller, logEntry).show(e.getComponent(), e.getX(), e.getY());
+                        }
+                    } else{
+                        List<LogEntry> selectedEntries = IntStream.of(LogTable.this.getSelectedRows())
+                                .mapToObj(selectedRow -> model.getRow(convertRowIndexToModel(selectedRow)))
+                                .collect(Collectors.toList());
+
+                        if (e.isPopupTrigger() && e.getComponent() instanceof JTable ) {
+                            new MultipleLogEntryMenu(controller, selectedEntries).show(e.getComponent(), e.getX(), e.getY());
+                        }
+                    }
+                }
+            }
+        });
     }
 
     public void setFilter(String filter) {
