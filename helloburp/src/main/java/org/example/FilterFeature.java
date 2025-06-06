@@ -5,6 +5,8 @@ import org.example.logtable.LogTableController;
 import com.coreyd97.BurpExtenderUtilities.HistoryField;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -22,6 +24,7 @@ public class FilterFeature extends JPanel {
     JPanel activeFilterPanel; // TODO: for now, there will only be one filter at a time. eventually, want both active filter and selected filter panels
     HistoryField searchField;
     JComboBox filterField;
+    JCheckBox loggingEnabledBox;
     LogTableController logTableController;
 
     FilterFeature(LogTableController logTableController) {
@@ -30,6 +33,14 @@ public class FilterFeature extends JPanel {
         this.searchLabel = new JLabel("Search:" );
         this.filterLabel = new JLabel("Filter:" );
         this.activeFilterPanel = new JPanel();
+        this.loggingEnabledBox = new JCheckBox("Logging Enabled");
+
+        // Set whether user wants all requests to be logged or not
+        // We will get this from the LogTableController in LogHttpHandler
+        this.logTableController.setLoggingEnabled(loggingEnabledBox.isSelected());
+        this.loggingEnabledBox.addActionListener(e -> {
+            this.logTableController.setLoggingEnabled(loggingEnabledBox.isSelected());
+        });
 
         // Create search field UI element and add interactivity to it
         this.searchField = new HistoryField(null, "filterHistory", 15);
@@ -125,10 +136,10 @@ public class FilterFeature extends JPanel {
 
                     if (selectedFilterOption != null && selectedFilterOption.equals("matches")) {
                         this.activeFilterPanel.add(headerFilterField);
-                        this.activeFilterPanel.add(headerButton);
+//                        this.activeFilterPanel.add(headerButton);
                     } else if (selectedFilterOption != null && !selectedFilterOption.isEmpty()) {
-                        if (this.activeFilterPanel.getComponent(this.activeFilterPanel.getComponentCount() - 2) instanceof JTextField) {
-                            this.activeFilterPanel.remove(this.activeFilterPanel.getComponentCount() - 2);
+                        if (this.activeFilterPanel.getComponent(this.activeFilterPanel.getComponentCount() - 1) instanceof JTextField) {
+                            this.activeFilterPanel.remove(this.activeFilterPanel.getComponentCount() - 1);
                         }
                         // headerName, filterString, inverted
                         setFilter("header", headerField.getText(), null,
@@ -140,7 +151,7 @@ public class FilterFeature extends JPanel {
 
                 this.activeFilterPanel.add(headerField);
                 this.activeFilterPanel.add(filterOptionsField);
-//                this.activeFilterPanel.add(headerButton);
+                this.activeFilterPanel.add(headerButton);
             } else if (s != null && s.equals("Tags")) {
                 this.activeFilterPanel.add(new JLabel("has tag"));
                 JTextField tagField = new JTextField(10);
@@ -194,6 +205,7 @@ public class FilterFeature extends JPanel {
         this.add(activeFilterPanel);
         this.add(searchLabel);
         this.add(searchField);
+        this.add(loggingEnabledBox);
         //this.add(enterButton);
 
         JButton exportButton = new JButton("Export Visible Requests");

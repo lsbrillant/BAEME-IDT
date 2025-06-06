@@ -1,5 +1,6 @@
 package org.example.logtable;
 
+import lombok.Getter;
 import lombok.Setter;
 import org.example.LogEntry;
 import org.example.requestviewer.RequestViewerController;
@@ -11,6 +12,9 @@ public class LogTableController {
     private final LogTableModel logTableModel;
     @Setter
     private RequestViewerController requestViewerController;
+    @Setter
+    @Getter
+    private boolean isLoggingEnabled;
 
     public LogTableController() {
         this.logTableModel = new LogTableModel(this);
