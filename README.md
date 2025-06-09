@@ -104,6 +104,16 @@ Follow the same steps as in the [Installation](#installation) section to generat
     - `TidyBurp.java` – Main extension class
 - Root files: `.gitignore`, `build.gradle.kts`, `settings.gradle.kts`, `gradlew`, `gradlew.bat`
 
+## Team
+
+This project was sponsored by **Security Innovation** and overseen by **Lucien Brilliant** as part of the University of Washington's Informatics Capstone program. The TidyBurp development team consists of:
+
+- **[Sheamin Kim](https://www.linkedin.com/in/sheamink/)** – Product Manager  
+- **[Dhruv Ashok](https://www.linkedin.com/in/dhruvashok/)** – Security Engineer  
+- **[Iris Hamilton](https://www.linkedin.com/in/iris-ham/)** – UX/UI Designer  
+- **[J.R. Lim](https://www.linkedin.com/in/jr-lim/)** – Information Architect  
+- **[Michaela Tran](https://www.linkedin.com/in/michaela-tran/)** – Data Engineer
+
 ## Acknowledgements
 
 This project was developed as part of a capstone course by students at the University of Washington. We sincerely thank **Security Innovation** for their sponsorship and continued support throughout the development of TidyBurp. Their guidance and feedback were instrumental in helping us build a tool that improves real-world security workflows.
