@@ -79,6 +79,7 @@ public class LogEntry {
     private String host; // w/ port number
     private String urlString; // url
     private URI uri;
+    private String path;
     private String httpMethod; // method
     private Short responseStatus = -1; // status codes
     private String responseStatusText; // status code text
@@ -327,6 +328,7 @@ public class LogEntry {
         }
         this.urlString = request.url();
         this.hostname = this.request.httpService().host();
+        this.path = this.request.pathWithoutQuery();
         this.protocol = this.request.httpService().secure() ? "https" : "http";
         this.isSSL = this.request.httpService().secure();
         this.targetPort = this.request.httpService().port();
@@ -657,7 +659,7 @@ public class LogEntry {
                     this.hostname != null ? this.hostname : "N/A", // String w/o port number
                     this.httpMethod != null ? this.httpMethod : "UNKNOWN", // String
                     //this.request != null ? this.request.url() : "N/A", // URL from request
-                    this.urlString != null ? this.urlString : "N/A",
+                    this.path != null ? this.path : "N/A",
                     this.getParamCount(), // Parameters
                     // need to get the processed ones instead
                     //this.request.parameters(),

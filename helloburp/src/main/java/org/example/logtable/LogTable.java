@@ -27,6 +27,7 @@ public class LogTable extends JTable {
 
     LogTable(LogTableController controller) {
         super(controller.getLogTableModel());
+        this.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); // enable horizontal scrollbar
         this.controller = controller;
         this.sorter = new TableRowSorter<>(controller.getLogTableModel());
         this.setRowSorter(sorter);
@@ -63,7 +64,7 @@ public class LogTable extends JTable {
                 case "number" -> width = 40;
                 case "method" -> width = 60;
                 case "host" -> width = 150;
-                case "url" -> width = 200;
+                case "path" -> width = 200;
                 case "params" -> width = 120;
                 case "code" -> width = 50;
                 case "length" -> width = 70;

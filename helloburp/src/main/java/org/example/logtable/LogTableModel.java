@@ -18,7 +18,7 @@ public class LogTableModel extends AbstractTableModel {
 
     public LogTableModel(LogTableController controller) {
         this.entries = Collections.synchronizedList(new ArrayList<>());
-        this.columnNames = new String[]{"Number", "Host", "Method", "URL", "Param count", "Edited", "Code", "Length", "MIME", "Extension", "Title", "TLS", "Request Source", "Cookies", "Time", "Tags"};
+        this.columnNames = new String[]{"Number", "Host", "Method", "Path", "Param count", "Edited", "Code", "Length", "MIME", "Extension", "Title", "TLS", "Request Source", "Cookies", "Time", "Tags"};
         this.controller = controller;
         this.currNumber = 1;
     }
