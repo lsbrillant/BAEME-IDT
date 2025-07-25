@@ -47,9 +47,8 @@ public class LogTableController {
         for (int viewRow : selectedRows) {
             int modelRow = logTable.convertRowIndexToModel(viewRow);
             LogEntry entry = logTableModel.getRow(modelRow);
-            List<String> currentTags = entry.getTags();
 
-            if (currentTags.contains(tag)) {
+            if (entry.hasTag(tag)) {
                 entry.removeTag(tag);
             } else {
                 entry.addTag(tag);
@@ -59,7 +58,7 @@ public class LogTableController {
         }
     }
 
-    private int getTagsColumnIndex() {
+    public int getTagsColumnIndex() {
         for (int i = 0; i < logTableModel.getColumnCount(); i++) {
             if ("Tags".equalsIgnoreCase(logTableModel.getColumnName(i))) {
                 return i;

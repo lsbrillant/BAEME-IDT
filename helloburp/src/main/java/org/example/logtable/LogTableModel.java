@@ -96,8 +96,8 @@ public class LogTableModel extends AbstractTableModel {
         if ("Tags".equalsIgnoreCase(columnName) && aValue instanceof String tag) {
             LogEntry entry = this.entries.get(row);
             entry.addTag(tag);
-            fireTableCellUpdated(row, column);
         }
+        fireTableCellUpdated(row, column);
     }
 
     @Override

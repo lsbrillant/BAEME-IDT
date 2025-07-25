@@ -580,6 +580,16 @@ public class LogEntry {
             tags.remove(tag);
         }
 
+        public void renameTag (String oldTag, String newTag) {
+            if (tags.contains(oldTag)) {
+                tags.set(tags.indexOf(oldTag), newTag);
+            }
+        }
+
+        public boolean hasTag(String tag) {
+            return tags.contains(tag);
+        }
+
 
         public void clearTags () {
             tags.clear();
