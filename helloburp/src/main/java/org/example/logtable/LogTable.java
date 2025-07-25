@@ -11,6 +11,7 @@ import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -136,7 +137,15 @@ public class LogTable extends JTable {
             this.sorter.setRowFilter(null);
         } else {
             this.currentFilterName = "Search: " + filter;
-            this.sorter.setRowFilter(RowFilter.regexFilter(filter));
+            RowFilter<LogTableModel, Integer> requestBodyFilter = new RowFilter<>() {
+                @Override
+                public boolean include(Entry<? extends LogTableModel, ? extends Integer> entry) {
+                    LogEntry e = entry.getModel().getRow(entry.getIdentifier());
+                    return e.getRequest().toString().contains(filter) || e.getResponse().contains(filter, false);
+                }
+            };
+            // Filter string found in table OR in request/response body
+            this.sorter.setRowFilter(RowFilter.orFilter(Arrays.asList(RowFilter.regexFilter(filter), requestBodyFilter)));
             ((JScrollPane) this.getParent().getParent()).getVerticalScrollBar().setValue(0); // maybe don't need this?
         }
     }
@@ -150,7 +159,9 @@ public class LogTable extends JTable {
         RowFilter<LogTableModel, Integer> headerFilter = new RowFilter<LogTableModel, Integer>() {
             public boolean include(Entry<? extends LogTableModel, ? extends Integer> entry) {
                 LogEntry e = entry.getModel().getRow(entry.getIdentifier());
-                List<HttpHeader> headers = e.getResponseHeaders();
+                // Get both request AND response headers
+                List<HttpHeader> headers = e.getRequestHeaders();
+                headers.addAll(e.getResponseHeaders());
                 if (filterString == null) {
                     for (HttpHeader header : headers) {
                         if (header.name().equalsIgnoreCase(headerName)) {

@@ -5,6 +5,7 @@ import org.example.logtable.LogTableController;
 import com.coreyd97.BurpExtenderUtilities.HistoryField;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -44,6 +45,7 @@ public class FilterFeature extends JPanel {
 
         // Create search field UI element and add interactivity to it
         this.searchField = new HistoryField(null, "filterHistory", 15);
+        searchField.setPreferredSize(new Dimension(200, searchField.getPreferredSize().height));
         searchField.getEditor().getEditorComponent().addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {

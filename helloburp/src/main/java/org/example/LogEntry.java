@@ -85,6 +85,7 @@ public class LogEntry {
     private String redirectURL;
     private String comment; // use for the annotations for the tags(?)
     private int requestResponseDelay;  // is this useful for slow responses(?)
+    @Getter
     private List<HttpHeader> requestHeaders;
     @Getter
     private List<HttpHeader> responseHeaders;
