@@ -664,7 +664,8 @@ public class LogEntry {
                     this.httpMethod != null ? this.httpMethod : "UNKNOWN", // String
                     //this.request != null ? this.request.url() : "N/A", // URL from request
                     this.path != null ? this.path : "N/A",
-                    this.getParamCount(), // Parameters
+                    this.uri.getQuery() != null ? this.uri.getQuery() : "", // Query parameters
+                    this.getParamCount(), // Parameter count
                     // need to get the processed ones instead
                     //this.request.parameters(),
                     // everything past here is null

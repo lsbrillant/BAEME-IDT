@@ -65,7 +65,8 @@ public class LogTable extends JTable {
                 case "method" -> width = 60;
                 case "host" -> width = 150;
                 case "path" -> width = 200;
-                case "params" -> width = 120;
+                case "query" -> width = 200;
+                case "param count" -> width = 50;
                 case "code" -> width = 50;
                 case "length" -> width = 70;
                 case "mime" -> width = 80;
