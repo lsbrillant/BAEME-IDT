@@ -213,6 +213,7 @@ public class FilterFeature extends JPanel {
             this.activeFilterPanel.repaint();
             this.filterField.setSelectedItem(null);
             logTableController.getLogTable().setFilter(null);
+            logTableController.getTabController().getView().resetFilter(); // set selected tab to Dashboard
         });
         this.add(resetButton);
 

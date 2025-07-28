@@ -97,4 +97,8 @@ public class TabView {
         // TODO: show dashboard tab above the table
         // TODO: list ALL tabs below this
     }
+
+    public void resetFilter() {
+        this.sideTable.setRowSelectionInterval(0, 0);
+    }
 }
