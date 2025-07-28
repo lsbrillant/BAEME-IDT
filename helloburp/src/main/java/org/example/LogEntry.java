@@ -599,7 +599,11 @@ public class LogEntry {
         }
 
         public byte[] getRequestBytes () {
-            return this.request.toByteArray().getBytes();
+            return this.request.toString().getBytes();
+        }
+
+        public byte[] getResponseBytes() {
+            return this.response.toByteArray().getBytes();
         }
 
         private boolean isValidUri (String uri){

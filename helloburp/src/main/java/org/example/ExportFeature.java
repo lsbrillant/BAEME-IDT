@@ -1,11 +1,14 @@
 package org.example;
 
+import org.example.logtable.LogTableModel;
+
 import javax.swing.*;
 import javax.swing.table.TableModel;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
+import java.util.Base64;
 
 public class ExportFeature {
     public static void exportVisibleRowsToCSV(JTable table, File file) throws IOException {
@@ -14,8 +17,9 @@ public class ExportFeature {
 
             for (int i = 0; i < model.getColumnCount(); i++) {
                 fw.write(model.getColumnName(i));
-                if (i < model.getColumnCount() - 1) fw.write(",");
+                fw.write(",");
             }
+            fw.write("Request,Response"); // add CSV headers for request and response
             fw.write("\n");
 
             for (int i = 0; i < table.getRowCount(); i++) {
@@ -36,8 +40,18 @@ public class ExportFeature {
                     }
 
                     fw.write(cellValue);
-                    if (j < model.getColumnCount() - 1) fw.write(",");
+                    fw.write(",");
                 }
+                // write the b64 encoded request
+                LogEntry e = ((LogTableModel) model).getRow(modelRow);
+                String encodedRequest = Base64.getEncoder().encodeToString(e.getRequestBytes());
+                fw.write(encodedRequest);
+
+                fw.write(",");
+
+                // write the b64 encoded response
+                String encodedResponse = Base64.getEncoder().encodeToString(e.getResponseBytes());
+                fw.write(encodedResponse);
                 fw.write("\n");
             }
 

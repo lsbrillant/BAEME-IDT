@@ -195,6 +195,7 @@ public class FilterFeature extends JPanel {
             }
             this.activeFilterPanel.revalidate();
             this.activeFilterPanel.repaint();
+            this.activeFilterPanel.requestFocus(); // fixes small UI bug where top bar doesn't resize until user interacts with it
             // above two lines force the JPanel to update
         });
 
