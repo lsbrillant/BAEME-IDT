@@ -2,6 +2,7 @@ package org.example.tabfeature;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.java.Log;
 import org.example.LogEntry;
 import org.example.logtable.LogTableModel;
 
@@ -9,6 +10,7 @@ import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import lombok.Getter;
 
@@ -124,5 +126,32 @@ public class TabModel {
             }
         };
         tab.setFilter(RowFilter.orFilter(Arrays.asList(currFilter, exactNumberFilter)));
+    }
+
+    public void removeEntryFromTab(Tab tab, LogEntry otherEntry) {
+        // TODO: check and try to remove existing orFilter first, otherwise do the below
+        RowFilter<LogTableModel, Integer> currFilter = tab.getFilter();
+        RowFilter<LogTableModel, Integer> exactNumberExclusionFilter = new RowFilter<LogTableModel, Integer>() {
+            @Override
+            public boolean include(Entry<? extends LogTableModel, ? extends Integer> entry) {
+                LogEntry e = entry.getModel().getRow(entry.getIdentifier());
+                return e.getNumber() != otherEntry.getNumber();
+            }
+        };
+        tab.setFilter(RowFilter.andFilter(Arrays.asList(currFilter, exactNumberExclusionFilter)));
+        controller.getView().refreshView(); // need to "reselect" current tab to activate the new filter
+    }
+
+    public void removeEntriesFromTab(Tab tab, HashSet<Integer> entriesToRemove) {
+        RowFilter<LogTableModel, Integer> currFilter = tab.getFilter();
+        RowFilter<LogTableModel, Integer> exactExclusionFilter = new RowFilter<LogTableModel, Integer>() {
+            @Override
+            public boolean include(Entry<? extends LogTableModel, ? extends Integer> entry) {
+                LogEntry e = entry.getModel().getRow(entry.getIdentifier());
+                return !entriesToRemove.contains(e.getNumber());
+            }
+        };
+        tab.setFilter(RowFilter.andFilter(Arrays.asList(currFilter, exactExclusionFilter)));
+        controller.getView().refreshView();
     }
 }

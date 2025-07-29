@@ -16,10 +16,7 @@ import javax.swing.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class MultipleLogEntryMenu extends JPopupMenu {
@@ -92,7 +89,20 @@ public class MultipleLogEntryMenu extends JPopupMenu {
             this.add(new JPopupMenu.Separator());
         }
 
-        JMenuItem removeItem = new JMenuItem(new AbstractAction("Remove " + selectedEntries.size() + " selected items") {
+        JMenuItem removeItemsFromTab = new JMenuItem(new AbstractAction("Remove " + selectedEntries.size() + " items from Tab") {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                HashSet<Integer> disallowedNumbers = new LinkedHashSet<>(selectedEntries.stream().map(LogEntry::getNumber).collect(Collectors.toSet()));
+                Tab currTab = logTableController.getTabController().getView().getCurrentTab();
+                logTableController.getTabController().getModel().removeEntriesFromTab(currTab, disallowedNumbers);
+            }
+        });
+        // Remove items from tab only makes sense when a non-Dashboard tab is selected
+        if (!logTableController.getTabController().getView().getCurrentTab().getName().equals("Dashboard")) {
+            this.add(removeItemsFromTab);
+        }
+
+        JMenuItem deleteItem = new JMenuItem(new AbstractAction("Delete " + selectedEntries.size() + " selected items") {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 //If we don't clear the selection, the table will select the next entry after row is deleted
@@ -103,6 +113,6 @@ public class MultipleLogEntryMenu extends JPopupMenu {
                 }
             }
         });
-        this.add(removeItem);
+        this.add(deleteItem);
     }
 }

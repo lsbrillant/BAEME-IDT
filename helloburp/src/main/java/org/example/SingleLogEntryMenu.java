@@ -74,13 +74,25 @@ public class SingleLogEntryMenu extends JPopupMenu {
             this.add(new JPopupMenu.Separator());
         }
 
+        JMenuItem removeFromTab = new JMenuItem(new AbstractAction("Remove from Tab") {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                Tab currTab = logTableController.getTabController().getView().getCurrentTab();
+                logTableController.getTabController().getModel().removeEntryFromTab(currTab, entry);
+            }
+        });
+        // Remove item from tab only makes sense when a non-Dashboard tab is selected
+        if (!logTableController.getTabController().getView().getCurrentTab().getName().equals("Dashboard")) {
+            this.add(removeFromTab);
+        }
 
-        JMenuItem removeItem = new JMenuItem(new AbstractAction("Remove Item") {
+
+        JMenuItem deleteItem = new JMenuItem(new AbstractAction("Delete Item") {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 logTableController.getLogTableModel().removeEntry(entry);
             }
         });
-        this.add(removeItem);
+        this.add(deleteItem);
     }
 }

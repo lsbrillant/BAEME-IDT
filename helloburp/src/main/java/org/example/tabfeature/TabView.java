@@ -4,6 +4,7 @@ import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 
 import lombok.Getter;
+import org.example.TidyBurp;
 import org.example.logtable.LogTableModel;
 
 import java.awt.*;
@@ -98,7 +99,18 @@ public class TabView {
         // TODO: list ALL tabs below this
     }
 
+    public Tab getCurrentTab() {
+        return controller.getModel().getTab(this.sideTable.convertRowIndexToModel(this.sideTable.getSelectedRow()));
+    }
+
     public void resetFilter() {
         this.sideTable.setRowSelectionInterval(0, 0);
+    }
+
+    public void refreshView() {
+        // Programmatically switch view to Dashboard and then back to current tab
+        int currTab = this.sideTable.getSelectedRow();
+        resetFilter();
+        this.sideTable.setRowSelectionInterval(currTab, currTab);
     }
 }
