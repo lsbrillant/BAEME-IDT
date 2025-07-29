@@ -212,7 +212,7 @@ public class FilterFeature extends JPanel {
             this.activeFilterPanel.revalidate();
             this.activeFilterPanel.repaint();
             this.filterField.setSelectedItem(null);
-            logTableController.getLogTable().setFilter(null);
+            logTableController.getLogTable().setFilter(null); // resets to filter that still ignores entries with Hidden tag
             logTableController.getTabController().getView().resetFilter(); // set selected tab to Dashboard
         });
         this.add(resetButton);

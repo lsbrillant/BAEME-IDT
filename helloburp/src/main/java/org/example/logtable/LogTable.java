@@ -136,7 +136,7 @@ public class LogTable extends JTable {
     public void setFilter(String filter) {
         // TODO: verify the regex is valid via Pattern.compile in FilterFeature
         if (filter == null) {
-            this.sorter.setRowFilter(null);
+            this.sorter.setRowFilter(controller.getTabController().getModel().getDashboardFilter()); // default filter to reset to
         } else {
             this.currentFilterName = "Search: " + filter;
             RowFilter<LogTableModel, Integer> requestBodyFilter = new RowFilter<>() {

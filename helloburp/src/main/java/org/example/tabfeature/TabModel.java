@@ -24,12 +24,22 @@ public class TabModel {
     private AbstractTableModel topPanelModel;
     @Getter
     private AbstractTableModel sidePanelModel;
+    @Getter
+    RowFilter<LogTableModel, Integer> dashboardFilter; // default filter to reset to
 
     TabModel(TabController controller) {
         this.controller = controller;
         this.allTabs = new ArrayList<>();
         this.activeTabs = new ArrayList<>();
-        allTabs.add(new Tab(RowFilter.regexFilter(".*"), "Dashboard"));
+
+        this.dashboardFilter = new RowFilter<>() {
+            @Override
+            public boolean include(Entry<? extends LogTableModel, ? extends Integer> entry) {
+                LogEntry e = entry.getModel().getRow(entry.getIdentifier());
+                return !e.hasTag("Hidden");
+            }
+        };
+        allTabs.add(new Tab(dashboardFilter, "Dashboard"));
 //        allTabs.add(new Tab(RowFilter.regexFilter("204"), "dsfhusdhfiuhsduifhdsuifhuidshfuidshfiudshufi"));
 
         this.sidePanelModel = new AbstractTableModel() {
