@@ -15,5 +15,6 @@ public class TabController {
         this.model = new TabModel(this);
         this.view = new TabView(this);
         this.logTableController = logTableController;
+        this.view.resetFilter(); // auto-select the Dashboard tab on table creation
     }
 }

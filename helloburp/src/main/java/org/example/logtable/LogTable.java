@@ -1,7 +1,6 @@
 package org.example.logtable;
 
 import burp.api.montoya.http.message.HttpHeader;
-import lombok.Setter;
 import org.example.LogEntry;
 import org.example.MultipleLogEntryMenu;
 import org.example.SingleLogEntryMenu;
@@ -24,7 +23,6 @@ public class LogTable extends JTable {
     @Getter
     private TableRowSorter<LogTableModel> sorter;
     @Getter
-    @Setter
     private String currentFilterName;
 
     LogTable(LogTableController controller) {
@@ -38,12 +36,12 @@ public class LogTable extends JTable {
         this.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
         this.getSelectionModel().addListSelectionListener(e -> {
-            if(e.getValueIsAdjusting()) return;
+            if (e.getValueIsAdjusting()) return;
             RequestViewerController requestViewerController = this.controller.getRequestViewerController();
             int selectedRow = getSelectedRow();
-            if(selectedRow == -1){
+            if (selectedRow == -1) {
                 requestViewerController.setDisplayedEntity(null);
-            }else {
+            } else {
                 // Use a relative instead of an absolute index (This prevents an issue when a filter is set)
                 LogEntry logEntry = controller.getLogTableModel().getData().get(convertRowIndexToModel(selectedRow));
                 if (logEntry != null) {
@@ -139,6 +137,7 @@ public class LogTable extends JTable {
         // TODO: verify the regex is valid via Pattern.compile in FilterFeature
         if (filter == null) {
             this.sorter.setRowFilter(controller.getTabController().getModel().getDashboardFilter()); // default filter to reset to
+            this.currentFilterName = ""; // reset filter name to empty string
         } else {
             this.currentFilterName = "Search: " + filter;
             RowFilter<LogTableModel, Integer> requestBodyFilter = new RowFilter<>() {
