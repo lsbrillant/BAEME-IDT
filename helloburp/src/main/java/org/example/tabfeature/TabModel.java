@@ -81,6 +81,10 @@ public class TabModel {
         return this.allTabs.get(index);
     }
 
+    public void renameTab(int tabIndex, String newName) {
+        allTabs.get(tabIndex).setName(newName);
+    }
+
     public void addTab(Tab tab, String location) {
         switch (location) {
             case "side": {
