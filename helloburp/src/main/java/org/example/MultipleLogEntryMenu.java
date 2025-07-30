@@ -89,6 +89,26 @@ public class MultipleLogEntryMenu extends JPopupMenu {
             this.add(new JPopupMenu.Separator());
         }
 
+        JMenuItem hideItems = new JMenuItem(new AbstractAction("Hide items") {
+           @Override
+           public void actionPerformed(ActionEvent actionEvent) {
+               for (LogEntry entry : selectedEntries) {
+                   entry.addTag("Hidden");
+               }
+               logTableController.getLogTableModel().fireTableDataChanged();
+           }
+        });
+
+        JMenuItem unhideItems = new JMenuItem(new AbstractAction("Unhide items") {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                for (LogEntry entry : selectedEntries) {
+                    entry.removeTag("Hidden");
+                }
+                logTableController.getLogTableModel().fireTableDataChanged();
+            }
+        });
+
         JMenuItem removeItemsFromTab = new JMenuItem(new AbstractAction("Remove " + selectedEntries.size() + " items from Tab") {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -97,9 +117,13 @@ public class MultipleLogEntryMenu extends JPopupMenu {
                 logTableController.getTabController().getModel().removeEntriesFromTab(currTab, disallowedNumbers);
             }
         });
+
         // Remove items from tab only makes sense when a non-Dashboard tab is selected
         if (!logTableController.getTabController().getView().getCurrentTab().getName().equals("Dashboard")) {
             this.add(removeItemsFromTab);
+        } else {
+            this.add(hideItems);
+            this.add(unhideItems);
         }
 
         JMenuItem deleteItem = new JMenuItem(new AbstractAction("Delete " + selectedEntries.size() + " selected items") {

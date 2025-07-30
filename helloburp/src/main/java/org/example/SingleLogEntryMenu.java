@@ -83,6 +83,14 @@ public class SingleLogEntryMenu extends JPopupMenu {
             }
         });
 
+        JMenuItem unhideItem = new JMenuItem(new AbstractAction("Unhide item") {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                entry.removeTag("Hidden");
+                logTableController.getLogTableModel().fireTableDataChanged();
+            }
+        });
+
         // Doesn't remove item but hides it from non-Dashboard tab view
         JMenuItem removeFromTab = new JMenuItem(new AbstractAction("Remove from Tab") {
             @Override
@@ -94,8 +102,8 @@ public class SingleLogEntryMenu extends JPopupMenu {
         // Remove item from tab only makes sense when a non-Dashboard tab is selected
         if (!logTableController.getTabController().getView().getCurrentTab().getName().equals("Dashboard")) {
             this.add(removeFromTab);
-        } else { // if we're on the Dashboard, give them the "Hide item" option instead
-            this.add(hideItem);
+        } else { // if we're on the Dashboard, give them the "Hide item"/"Unhide item" option instead
+            this.add(entry.hasTag("Hidden") ? unhideItem : hideItem);
         }
 
 
