@@ -1,6 +1,7 @@
 package org.example.logtable;
 
 import burp.api.montoya.http.message.HttpHeader;
+import lombok.Setter;
 import org.example.LogEntry;
 import org.example.MultipleLogEntryMenu;
 import org.example.SingleLogEntryMenu;
@@ -23,6 +24,7 @@ public class LogTable extends JTable {
     @Getter
     private TableRowSorter<LogTableModel> sorter;
     @Getter
+    @Setter
     private String currentFilterName;
 
     LogTable(LogTableController controller) {
