@@ -87,7 +87,7 @@ Follow the same steps as in the [Installation](#installation) section to generat
       - `LogTableColumnModel.java` – Manages column order/values
       - `LogTableController.java` – Controls table data flow
       - `LogTableModel.java` – Injects `LogEntry` into table cells
-      - `MultiTagCellRenderer.java` – Renders multiple tags per cell
+      - `MultiTagCellRenderer.java` – Renders multiple tags in log table cells
     - `requestviewer/`
       - `RequestViewerController.java` – Connects model and view
       - `RequestViewerPanel.java` – UI for request/response
@@ -99,8 +99,11 @@ Follow the same steps as in the [Installation](#installation) section to generat
     - `LogEntry.java` – Stores parsed HTTP data
     - `LogHTTPHandler.java` – Processes HTTP transactions
     - `LogProcessor.java` – Single request/response logic
+    - `MultipleLogEntryMenu.java` - Right click context menu that appears when multiple log table entries are selected
+    - `SingleLogEntryMenu.java` - Right click context menu that appears when a single log table entry is selected
     - `Status.java` – Enum for request status
     - `TaggingFeature.java` – Tag interface and logic
+    - `TBContextMenu.java` - Right click context menu in Proxy tab that lets you send requests to TidyBurp
     - `TidyBurp.java` – Main extension class
 - Root files: `.gitignore`, `build.gradle.kts`, `settings.gradle.kts`, `gradlew`, `gradlew.bat`
 
