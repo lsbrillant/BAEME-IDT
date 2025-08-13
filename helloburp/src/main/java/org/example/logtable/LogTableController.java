@@ -19,6 +19,9 @@ public class LogTableController {
     private boolean isLoggingEnabled;
     @Setter
     @Getter
+    private boolean isRegexEnabled;
+    @Setter
+    @Getter
     private TabController tabController;
 
     public LogTableController() {

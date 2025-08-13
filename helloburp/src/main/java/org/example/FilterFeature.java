@@ -4,6 +4,7 @@ import org.example.logtable.LogTable;
 import org.example.logtable.LogTableController;
 import com.coreyd97.BurpExtenderUtilities.HistoryField;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -25,6 +26,7 @@ public class FilterFeature extends JPanel {
     JPanel activeFilterPanel; // TODO: for now, there will only be one filter at a time. eventually, want both active filter and selected filter panels
     HistoryField searchField;
     JComboBox filterField;
+    JCheckBox regexEnabledBox;
     JCheckBox loggingEnabledBox;
     LogTableController logTableController;
 
@@ -41,6 +43,40 @@ public class FilterFeature extends JPanel {
         this.logTableController.setLoggingEnabled(loggingEnabledBox.isSelected());
         this.loggingEnabledBox.addActionListener(e -> {
             this.logTableController.setLoggingEnabled(loggingEnabledBox.isSelected());
+        });
+
+        this.regexEnabledBox = new JCheckBox("Regex");
+        this.regexEnabledBox.setToolTipText("Enable/disable regex filtering GLOBALLY");
+//        regexEnabledBox.setPreferredSize(new Dimension(22, 22));
+//        try {
+//            Image img = ImageIO.read(getClass().getResource("/images/regex.png"));
+//            img = img.getScaledInstance(16, 16, Image.SCALE_SMOOTH);
+//            regexEnabledBox.setIcon(new ImageIcon(img));
+//            regexEnabledBox.setToolTipText("Enable/disable regex GLOBALLY");
+//        } catch (Exception ex) {
+//            throw new RuntimeException(ex);
+//        }
+        regexEnabledBox.addActionListener(e -> {
+            logTableController.setRegexEnabled(regexEnabledBox.isSelected());
+//            if (logTableController.isRegexEnabled()) { // add icon if regex is enabled
+//                try {
+//                    Image img = ImageIO.read(getClass().getResource("/images/regex.png"));
+//                    img.getScaledInstance(16, 16, Image.SCALE_SMOOTH);
+//                    regexEnabledBox.setIcon(new ImageIcon(img));
+//                    regexEnabledBox.setToolTipText("blah");
+//                } catch (IOException ex) {
+//                    throw new RuntimeException(ex);
+//                }
+//            } else { // remove icon if regex is disabled
+//                try {
+//                    Image img = ImageIO.read(getClass().getResource("/images/blank.png"));
+//                    img.getScaledInstance(16, 16, Image.SCALE_SMOOTH);
+//                    regexEnabledBox.setIcon(new ImageIcon(img));
+//                    regexEnabledBox.setToolTipText("bleh");
+//                } catch (IOException ex) {
+//                    throw new RuntimeException(ex);
+//                }
+//            }
         });
 
         // Create search field UI element and add interactivity to it
@@ -222,8 +258,8 @@ public class FilterFeature extends JPanel {
         this.add(activeFilterPanel);
         this.add(searchLabel);
         this.add(searchField);
+        this.add(regexEnabledBox);
         this.add(loggingEnabledBox);
-        //this.add(enterButton);
 
         JButton exportButton = new JButton("Export Visible Requests");
         exportButton.setToolTipText("Download all currently visible rows as a CSV file");

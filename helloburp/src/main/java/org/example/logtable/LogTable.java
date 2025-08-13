@@ -4,6 +4,7 @@ import burp.api.montoya.http.message.HttpHeader;
 import org.example.LogEntry;
 import org.example.MultipleLogEntryMenu;
 import org.example.SingleLogEntryMenu;
+import org.example.TidyBurp;
 import org.example.requestviewer.RequestViewerController;
 
 import javax.swing.*;
@@ -13,6 +14,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -144,6 +146,9 @@ public class LogTable extends JTable {
                 @Override
                 public boolean include(Entry<? extends LogTableModel, ? extends Integer> entry) {
                     LogEntry e = entry.getModel().getRow(entry.getIdentifier());
+                    if (controller.isRegexEnabled()) {
+                        return e.getRequest().toString().matches(filter) || e.getResponse().toString().matches(filter);
+                    }
                     return e.getRequest().toString().contains(filter) || e.getResponse().contains(filter, false);
                 }
             };
@@ -153,6 +158,7 @@ public class LogTable extends JTable {
         }
     }
 
+    // TODO: fix this
     public void setHeaderFilter(String headerName, String filterString, boolean inverted) {
         if (headerName.isEmpty() && filterString != null && filterString.isEmpty()) {
             this.sorter.setRowFilter(null);
@@ -167,14 +173,18 @@ public class LogTable extends JTable {
                 headers.addAll(e.getResponseHeaders());
                 if (filterString == null) {
                     for (HttpHeader header : headers) {
-                        if (header.name().equalsIgnoreCase(headerName)) {
+                        boolean regexEnabled = controller.isRegexEnabled();
+                        if ((header.name().equalsIgnoreCase(headerName) && !regexEnabled) || (header.name().matches(headerName) && regexEnabled)) {
                             return !inverted;
                         }
                     }
                     return inverted;
                 } else {
                     for (HttpHeader header : headers) {
-                        if (header.name().equalsIgnoreCase(headerName) && header.value().matches(filterString)) {
+                        boolean regexEnabled = controller.isRegexEnabled();
+                        if (!regexEnabled && header.name().equalsIgnoreCase(headerName) && header.value().equalsIgnoreCase(filterString)) {
+                            return true;
+                        } else if (regexEnabled && header.name().matches(headerName) && header.value().matches(filterString)) {
                             return true;
                         }
                     }
@@ -203,7 +213,10 @@ public class LogTable extends JTable {
                 if (filterString.toLowerCase().matches("^[12345]xx")) { // of form 1xx, 2xx, etc.
                     return e.getResponseStatus().toString().matches(filterString.charAt(0) + ".*");
                 }
-                return e.getResponseStatus().toString().matches(filterString);
+                if (controller.isRegexEnabled()) {
+                    return e.getResponseStatus().toString().matches(filterString);
+                }
+                return e.getResponseStatus().toString().contains(filterString);
             }
         };
         this.currentFilterName = "Code matches " + filterString;
@@ -219,7 +232,10 @@ public class LogTable extends JTable {
             public boolean include(Entry<? extends LogTableModel, ? extends Integer> entry) {
                 LogEntry e = entry.getModel().getRow(entry.getIdentifier());
                 String data = e.getData().get(columnIndex).toString();
-                return data.matches(filterString);
+                if (controller.isRegexEnabled()) {
+                    return data.matches(filterString);
+                }
+                return data.contains(filterString);
             }
         };
         this.currentFilterName = getModel().getColumnName(columnIndex) + " matches " + filterString;
@@ -236,6 +252,9 @@ public class LogTable extends JTable {
             public boolean include(Entry<? extends LogTableModel, ? extends Integer> entry) {
                 LogEntry logEntry = entry.getModel().getRow(entry.getIdentifier());
                 List<String> tags = logEntry.getTags();
+                if (controller.isRegexEnabled()) {
+                    return tags.stream().anyMatch(tag -> tag.matches(tagFilter));
+                }
                 return tags.stream().anyMatch(tag -> tag.equalsIgnoreCase(tagFilter));
             }
         };
